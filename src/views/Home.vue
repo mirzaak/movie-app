@@ -1,6 +1,5 @@
 <template>
-  <div class="home">
-  </div>
+
 </template>
 
 <script>
@@ -13,4 +12,5 @@ export default {
 body{
   margin: 0;
 }
+
 </style>
