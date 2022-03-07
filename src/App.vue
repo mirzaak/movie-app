@@ -37,9 +37,51 @@
     </div>
   </nav>
   <router-view/>
+  <footer>
+    <div class="footer">
+      <div class="footercontent">
+        <div class="fcontent">
+        <div class="footerleft">
+        <img class="logodva" src="./assets/logodva.svg" alt="">
+        <div class="footeruser">User</div>
+        </div>
+        <ul>
+          <a href="#">THE BASICS</a>
+          <li>About TMDB</li>
+          <li>Contact Us</li>
+          <li>Support Forums</li>
+          <li>API</li>
+          <li>System Status</li>
+        </ul>
+        <ul>
+          <a href="#">GET INVOLVED</a>
+          <li>Contribution Bible</li>
+          <li>Add New Movie</li>
+          <li>Add New TV Show</li>
+        </ul>
+        <ul>
+          <a href="#">COMMUNITY</a>
+          <li>Guidelines</li>
+          <li>Discussions</li>
+          <li>Leaderboard</li>
+          <li>Twitter</li>
+        </ul>
+        <ul>
+          <a href="#">COMMUNITY</a>
+          <li>Terms of Use</li>
+          <li>API Terms of Use</li>
+          <li>Privacy Policy</li>
+        </ul>
+        
+      </div>
+    </div>
+    </div>
+  </footer>
 </template>
-
 <style>
+body{
+  margin: 0;
+}
 *{
     font-family: 'Source Sans Pro', Arial, sans-serif;
 
@@ -114,5 +156,54 @@ nav a{
 .dropdowncontent a:hover{
   background: rgba(211, 211, 211, 0.489);
   overflow: hidden;
+}
+.footer{
+  height: 300px;
+  width: 100%;
+  background: #0d253f;
+}
+.footercontent{
+  width: 1000px;
+  height: 300px;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+}
+.footercontent li{
+  text-decoration: none;
+  color: white;
+  list-style-type: none;
+  font-size: 1.0em;
+  line-height: 1.4em;
+}
+.footercontent a{
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  line-height: 1.2em;
+}
+.logodva{
+  width: 130px;
+  height: 94px;
+}
+.fcontent{
+  display: flex;
+  margin-top: 40px;
+  margin: auto;
+}
+
+.footeruser{
+  background:white;
+  width: 130px;
+  height: 30px;
+  border-radius: 5px;
+  color: #01b4e4;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  margin-top: 20px;
+  font-weight: bold;
 }
 </style>
