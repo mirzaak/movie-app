@@ -161,6 +161,8 @@ nav a{
   height: 300px;
   width: 100%;
   background: #0d253f;
+  bottom: 0;
+  position: relative;
 }
 .footercontent{
   width: 1000px;

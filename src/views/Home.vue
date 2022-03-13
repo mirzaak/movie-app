@@ -271,15 +271,6 @@ body{
   border-radius: 34px;
 
 }
-::-webkit-scrollbar {
-  height: 7px;
-  border-radius: 5px;
-  
-}
-::-webkit-scrollbar-thumb {
-  background: lightgray;
-  border-radius: 5px;
-}
 .circle{
   padding: 2px;
 }
@@ -299,6 +290,15 @@ body{
   font-size: 7px;
   color: white;
   position: absolute;
+}
+::-webkit-scrollbar {
+  height: 7px;
+  border-radius: 5px;
+  
+}
+::-webkit-scrollbar-thumb {
+  background: lightgray;
+  border-radius: 5px;
 }
 .populartrending{
   background-image: url(../assets/back.svg);
