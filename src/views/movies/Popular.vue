@@ -138,7 +138,7 @@
 <div class="right">
 <div class="movies" v-if="popular">
 <div class="movie" v-for="movie in popular" :key="movie">
-<div class="morebutton" @click.capture="more"></div>
+<div class="morebutton" @click="more"></div>
 <div class="more">
   <p>Want to rate or add this item to a list?</p>
   <a>Login</a>
@@ -227,52 +227,15 @@ computed:{
 },
 methods:{
         more(){
-  var expand = document.getElementsByClassName("morebutton");
-  for (let i = 0; i < expand.length; i++) {
-  expand[i].addEventListener("click", function() {
-    var panel = this.nextElementSibling
-    if (panel.style.display === "flex") {
+          var morebutton = document.getElementsByClassName("morebutton")
+    for(let i = 0; morebutton.length > i; i++){
+      var more = this.nextElementSibling
+      morebutton[i].addEventListener("click",{
 
-      panel.style.display = "none"
-
-    } else {
-      panel.style.display = "flex"
-
-    }
-  });
-}
-
-  var movieback = document.getElementsByClassName("movieback");
+        
   
-  for (let i = 0; i < movieback.length; i++) {
-  expand[i].onclick = function() {
-    if (movieback[i].style.filter === "blur(20px)") {
-      movieback[i].style.filter = "none"
-
-    } else {
-      movieback[i].style.filter = "blur(20px)"
-
-    }
-  };
-  movieback[i].onclick = function() {
-    if (movieback[i].style.filter === "none") {
-      movieback[i].style.filter = "none"
-      expand[i].nextElementSibling.style.display="none"
-
-
-    } else {
-      movieback[i].style.filter = "none"
-      expand[i].nextElementSibling.style.display="none"
-
-    }
-  };
-  
-}
-
-
-
-
-    },
+      })
+        }},
 
   async loadMore(){
     await axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page='+this.number++)
