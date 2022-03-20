@@ -25,7 +25,6 @@
 <option value="original_title.desc" @click.prevent="titledesc">Title (Z-A)</option>
 </select>
 </div>
-
 <div class="filtertwo filter" @click="expandtwo" :class="{ active: isActiveTwo }">
 <div class="filterhead">
 <h2>Filters</h2>
@@ -34,7 +33,7 @@
 </div>
 <div class="filtertwocontent">
 <div class="contentfilter">
-<p>Show Me</p>
+<span class="qMark"><p>Show Me</p><span class="tooltipqMark">Login to filter items you've watched.</span><img class="questionMark" src="../questionMark.svg" alt=""></span>
 <label class="container">
   <input type="radio" name="radio">
   <span class="checkmark"></span>
@@ -68,6 +67,7 @@
 <label for=""><label for="">To</label><input  class="to" type="date" v-model="doGodina"></label>
 </div>
 <div class="contentfilter">
+<p>Genres</p>
 <div class="zanrovi">
 <div class="genre" v-for="genre in genres" :key="genre" @click="changeColor">
 <a href="#" class="genres" :class="{selected: this.genre.includes(genre.id)}"  @click.prevent="zanr(genre.id)">{{genre.name}}</a>
@@ -78,7 +78,7 @@
 <p>Certification</p>
 </div>
 <div class="contentfilter">
-<p>Language</p>
+<span class="qMark"><p>Login</p><span class="tooltipqMark">Login to filter items you've watched.</span><img class="questionMark" src="../questionMark.svg" alt=""></span>
 <select class="language" name="" id=""></select>
 </div>
 <div class="contentfilter">
@@ -112,7 +112,7 @@
 </div>
 <div class="filterthreecontent">
 <div class="contentfilter">
-<p>My Services</p>
+<span class="qMark"><p>Show Me</p><span class="tooltipqMark">Login to filter items you've watched.</span><img class="questionMark" src="../questionMark.svg" alt=""></span>
 <label class="jedan">
   <input type="checkbox" checked="checked">
   <span class="dva"></span>
@@ -137,19 +137,37 @@
 </div>
 <div class="right">
 <div class="movies" v-if="popular">
-<div class="movie" v-for="movie in popular.results" :key="movie">
+<div class="movie" v-for="movie in popular" :key="movie">
+<div class="morebutton" @click.capture="more"></div>
+<div class="more">
+  <p>Want to rate or add this item to a list?</p>
+  <a>Login</a>
+<div class="line"></div>
+  <p>Not a member?</p>
+  <a>Sign up and join the community</a>
+
+</div>
+<div class="moreback">
+<div class="movieback">
 <img class="movieposter" :src="slika + movie.poster_path" alt="">
 <div class="percentage"><circle-progress class="circle" :percent="movie.vote_average*10" :size="200" fill-color="green" empty-color="none" /><p class="percentagebroj">{{movie.vote_average*10}}</p><a>%</a></div>
 <div class="card">
 <a href="#">{{movie.original_title}}</a>
 <p>{{movie.release_date}}</p>
+</div>
+</div>
+</div>
+
+</div>
+
+
+
+</div>
+
 
 </div>
 </div>
-</div>
-</div>
-</div>
-<button @click="loadmore" class="loadmore">Load More</button>
+<button @click="loadMore" class="loadmore">Load More</button>
 </div>
 
 </template>
@@ -161,6 +179,7 @@ import CircleProgress from "vue3-circle-progress";
 
 export default {
     components:{CircleProgress},
+
 created(){
 axios.get('https://api.themoviedb.org/3/genre/movie/list?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US')
 .then((response)=>{
@@ -172,16 +191,16 @@ axios.get('https://api.themoviedb.org/3/watch/providers/regions?api_key=0b5e8ce7
 this.avaliableRegions = response.data
 console.log(this.avaliableRegions)
 })
-    axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page='+this.page)
+      axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page=1')
     .then((response) => {
-    this.popular = response.data
+    this.popular = response.data.results
     console.log(this.popular)
     })
 },
 data(){
     return{
         slika: 'https://image.tmdb.org/t/p/original/',
-        popular:null,
+        popular:[],
         isActiveOne:false,
         isActiveTwo:false,
         isActiveThree:false,
@@ -197,22 +216,71 @@ data(){
         wProviders:'',
         avaliableRegions:'',
         regionData:'',
-        pagenext:null,
-        page:null,
+        pagenext:[],
+        page:[],
         filterTrue:false,
+        number:2,
+        busy:false,
     }
 },
-
-methods:{
-loadmore(){
-    axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page=2')
-    .then((response) => {
-    this.page = response.data
-    })
-    console.log(this.popular.results)
-    console.log(this.page.results)
-    this.pagenext.concat(this.popular.results,this.page.results)
+computed:{
 },
+methods:{
+        more(){
+  var expand = document.getElementsByClassName("morebutton");
+  for (let i = 0; i < expand.length; i++) {
+  expand[i].addEventListener("click", function() {
+    var panel = this.nextElementSibling
+    if (panel.style.display === "flex") {
+
+      panel.style.display = "none"
+
+    } else {
+      panel.style.display = "flex"
+
+    }
+  });
+}
+
+  var movieback = document.getElementsByClassName("movieback");
+  
+  for (let i = 0; i < movieback.length; i++) {
+  expand[i].onclick = function() {
+    if (movieback[i].style.filter === "blur(20px)") {
+      movieback[i].style.filter = "none"
+
+    } else {
+      movieback[i].style.filter = "blur(20px)"
+
+    }
+  };
+  movieback[i].onclick = function() {
+    if (movieback[i].style.filter === "none") {
+      movieback[i].style.filter = "none"
+      expand[i].nextElementSibling.style.display="none"
+
+
+    } else {
+      movieback[i].style.filter = "none"
+      expand[i].nextElementSibling.style.display="none"
+
+    }
+  };
+  
+}
+
+
+
+
+    },
+
+  async loadMore(){
+    await axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page='+this.number++)
+    .then((response)=>{
+      this.page = response.data.results
+      this.popular = this.popular.concat(this.page)
+    })
+  },
           submit(){
                   const jedan = document.getElementsByClassName("odSlider")
         this.vagte = jedan[0].value
@@ -251,10 +319,10 @@ console.log(this.wProviders)
       console.log(this.genre)
         this.filterTrue = true
       },
+
       expandone(){
 var acc = document.getElementsByClassName("filter");
 var i;
-
 for (i = 0; i < acc.length; i++) {
     this.isActiveOne = !this.isActiveOne
     var panel = acc[0].nextElementSibling;
@@ -312,6 +380,7 @@ for (i = 0; i < acc.length; i++) {
 }
 .right{
     width: 1050px;
+    height: 100%;
     margin-top: 10px;
     align-items: flex-start;
 }
@@ -320,6 +389,7 @@ for (i = 0; i < acc.length; i++) {
     height: 270px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    
 }
 .movie{
     box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
@@ -328,9 +398,8 @@ for (i = 0; i < acc.length; i++) {
     margin: auto;
     margin-top: 0;
     margin-bottom: 30px;
-    border: 1px solid lightgray;
     border-radius: 10px;
-
+    position: relative;
 }
 .movies{
     display: flex;
@@ -380,7 +449,10 @@ for (i = 0; i < acc.length; i++) {
 .card{
     display: flex;
     flex-direction: column;
-    width: 178px; 
+    width: 178px;
+    position: relative;
+    cursor:pointer;
+
 }
 .card a{
     text-decoration: none;
@@ -617,7 +689,6 @@ margin-top: 5px;
   height: 15px;
   width: 15px;
   border-radius: 5px;
-  background-color: #01b4e4;
 }
 
 .jedan:hover input ~ .dva {
@@ -625,7 +696,7 @@ margin-top: 5px;
 }
 
 .jedan input:checked ~ .dva {
-  background-color: #2196F3;
+  background-color: #01b4e4;
 }
 
 .dva:after {
@@ -738,7 +809,7 @@ margin-top: 5px;
   background: white;
   color: black;
   border-radius: 50px;
-  padding: 5px;
+  padding: 8px;
   font-size: 12px;
   border: 1px solid lightgray;
   display: flex;
@@ -794,5 +865,100 @@ margin-top: 5px;
   color: white;
   cursor: pointer;
   pointer-events: all;
+}
+.questionMark{
+  width: 16px;
+  height: 16px;
+  opacity: 0.4;
+  margin-top: 15px;
+  margin-left: 5px;
+}
+.qMark{
+  display: flex;
+  flex-direction: row;
+  width: 200px;
+  height: 50px;
+  position: relative;
+}
+.tooltipqMark{
+  font-weight: 300;
+  height: 25px;
+  width: 230px;
+  background: #0d253f;
+  position: absolute;
+  bottom: 40px;
+  color: white;
+  align-items: center;
+  border-radius: 5px;
+  display: none;
+  padding-left: 10px;
+}
+.qMark:hover .tooltipqMark{
+  display: flex;
+}
+.from{
+  border-radius: 5px;
+  border: 1px solid lightgray;
+}
+.to{
+  border-radius: 5px;
+  border: 1px solid lightgray;
+}
+.movieback{
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  display: flex;
+}
+.moreback{
+  overflow: hidden;
+  border-radius: 10px;
+}
+.more{
+  width: 280px;
+  height: 180px;
+  background: white;
+  position: absolute;
+  z-index: 2;
+  left: 15px;
+  top: 35px;
+  display: none;
+  flex-direction: column;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  overflow: visible;
+
+}
+.more p,a{
+  padding-left: 10px;
+}
+.more a{
+  width: 262px;
+  cursor: pointer;
+
+}
+.more a:hover{
+  background: #0d253f;
+  color: white;
+}
+.line{
+  border-top: 2px solid black;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  margin-top: 10px;
+  
+
+}
+.morebutton{
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  position: absolute;
+  background: white;
+  top: 10px;
+  left: 145px;
+  cursor: pointer;
+  opacity: 0.4;
 }
 </style>
