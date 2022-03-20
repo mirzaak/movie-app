@@ -229,9 +229,9 @@ methods:{
         more(){
           var morebutton = document.getElementsByClassName("morebutton")
     for(let i = 0; morebutton.length > i; i++){
-      var more = this.nextElementSibling
+            var panel = this.nextElementSibling
       morebutton[i].addEventListener("click",{
-
+        if(panel.style.display ==="flex")
         
   
       })
