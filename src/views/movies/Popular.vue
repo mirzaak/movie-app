@@ -227,14 +227,20 @@ computed:{
 },
 methods:{
         more(){
-          var morebutton = document.getElementsByClassName("morebutton")
+          var morebutton = [...document.querySelectorAll("div.morebutton")]
+          
+          console.log(morebutton.length)
     for(let i = 0; morebutton.length > i; i++){
-            var panel = this.nextElementSibling
-      morebutton[i].addEventListener("click",{
-        if(panel.style.display ==="flex")
-        
-  
-      })
+            morebutton[i].addEventListener("click", function(){
+              var more = this
+           if(more.style.display === "flex"){
+             more.style.display = "none"
+            }else{
+              more.style.display = "flex"
+            }
+            }
+            )
+            
         }},
 
   async loadMore(){
