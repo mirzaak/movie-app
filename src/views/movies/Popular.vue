@@ -78,13 +78,15 @@
 <p>Certification</p>
 </div>
 <div class="contentfilter">
-<span class="qMark"><p>Login</p><span class="tooltipqMark">Login to filter items you've watched.</span><img class="questionMark" src="../questionMark.svg" alt=""></span>
+<span class="qMark"><p>Language</p><span class="tooltipqMark">Login to filter items you've watched.</span><img class="questionMark" src="../questionMark.svg" alt=""></span>
 <select class="language" name="" id=""></select>
 </div>
 <div class="contentfilter">
 <p>User Score</p>
-<input type="range" class="range odSlider" value="0" min="0" max="10">
-<input type="range" class="range doSlider" value="10" min="0" max="10">
+<div class="slider">
+<input type="range" min="0" max="5" value="0" class="sliderone">
+<input type="range" min="0" max="5" value="4" class="slidertwo">
+</div>
 </div>
 <div class="contentfilter">
 <p>Minimum User Votes</p>
@@ -137,9 +139,9 @@
 </div>
 <div class="right">
 <div class="movies" v-if="popular">
-<div class="movie" v-for="movie in popular" :key="movie">
-<div class="morebutton" @click="more"></div>
-<div class="more">
+<div class="movie" v-for="(movie) in popular" :key="movie">
+<div class="morebutton" @click="more(movie)" ref="morebutton"></div>
+<div class="more" :class="{activeMore:movie.active}">
   <p>Want to rate or add this item to a list?</p>
   <a>Login</a>
 <div class="line"></div>
@@ -148,7 +150,7 @@
 
 </div>
 <div class="moreback">
-<div class="movieback">
+<div class="movieback" :class="{activeMovieback:movie.active}"  @click="disable(movie)">
 <img class="movieposter" :src="slika + movie.poster_path" alt="">
 <div class="percentage"><circle-progress class="circle" :percent="movie.vote_average*10" :size="200" fill-color="green" empty-color="none" /><p class="percentagebroj">{{movie.vote_average*10}}</p><a>%</a></div>
 <div class="card">
@@ -180,7 +182,7 @@ import CircleProgress from "vue3-circle-progress";
 export default {
     components:{CircleProgress},
 
-created(){
+mounted(){
 axios.get('https://api.themoviedb.org/3/genre/movie/list?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US')
 .then((response)=>{
   this.genres = response.data.genres
@@ -220,28 +222,21 @@ data(){
         page:[],
         filterTrue:false,
         number:2,
-        busy:false,
+        activee:false,
+        activeMovies:[]
     }
 },
 computed:{
 },
 methods:{
-        more(){
-          var morebutton = [...document.querySelectorAll("div.morebutton")]
-          
-          console.log(morebutton.length)
-    for(let i = 0; morebutton.length > i; i++){
-            morebutton[i].addEventListener("click", function(){
-              var more = this
-           if(more.style.display === "flex"){
-             more.style.display = "none"
-            }else{
-              more.style.display = "flex"
-            }
-            }
-            )
-            
-        }},
+  disable(movie){
+    if(movie.active){
+      movie.active = !movie.active
+    }
+  },
+        more(movie){
+          movie.active = !movie.active
+          },
 
   async loadMore(){
     await axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page='+this.number++)
@@ -257,7 +252,7 @@ methods:{
         this.valte = dva[0].value
           axios.get('https://api.themoviedb.org/3/discover/movie?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&sort_by='+this.sort+'&include_adult=false&include_video=false&page=1&primary_release_date.gte='+this.odGodina+'&'+'&primary_release_date.lte='+this.doGodina+'&'+'&vote_average.gte='+this.vagte+'&'+'&vote_average.lte='+this.valte+'&'+this.genre+'&watch_region='+this.regionData+'&with_watch_providers='+this.sProvider+'&with_genres='+this.genre+'&'+'with_keywords='+this.keywords)
           .then((response)=>{
-            this.popular = response.data
+            this.popular = response.data.results
           })
           console.log(this.genre)
           console.log(this.odGodina)
@@ -929,5 +924,30 @@ margin-top: 5px;
   left: 145px;
   cursor: pointer;
   opacity: 0.4;
+}
+.activeMore{
+  display: flex;
+}
+.activeMovieback{
+  filter: blur(20px);
+}
+.slider{
+  width: 200px;
+  height: 40px;
+  position: relative;
+  margin-left: 10px;
+}
+.sliderone{
+  position: relative;
+  width: 200px;
+  background: none;
+  -webkit-appearance: none;
+}
+.slidertwo{
+  position: absolute;
+  bottom: 20px;
+  width: 200px;
+  background: none;
+  -webkit-appearance: none;
 }
 </style>
