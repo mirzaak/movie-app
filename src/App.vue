@@ -138,6 +138,7 @@ nav a{
   padding-top: 10px;
   padding-bottom: 10px;
   border: 1px solid lightgray;
+  z-index: 2;
 
 }
 .dropdowncontent a{

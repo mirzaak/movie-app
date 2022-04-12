@@ -83,18 +83,41 @@
 </div>
 <div class="contentfilter">
 <p>User Score</p>
-<div class="slider">
-<input type="range" min="0" max="5" value="0" class="sliderone">
-<input type="range" min="0" max="5" value="4" class="slidertwo">
-</div>
+      <div class="slider">
+        <div class="progress" @click="uScore"></div>
+      </div>
+      <div class="range-input">
+        <input type="range" ref="rangeone" class="range-min" min="0" max="10"  v-model="uScoreOne" @click="gap">
+        <input type="range" ref="rangetwo" class="range-max" min="0" max="10"   v-model="uScoreTwo" @click="gapTwo">
+      <div class="uscoreBack">
+        <p>0</p><p>5</p><p>10</p>
+      </div>
+      </div>
 </div>
 <div class="contentfilter">
 <p>Minimum User Votes</p>
-<input type="range" class="range">
+      <div class="slider">
+        <div class="progress" @click="uScore"></div>
+      </div>
+      <div class="range-input">
+        <input type="range" ref="rangeone" class="range-min" min="0" max="10"  v-model="votemin" >
+      <div class="uscoreBack">
+        <p>0</p><p>5</p><p>10</p>
+      </div>
+      </div>
 </div>
 <div class="contentfilter">
 <p>Runtime</p>
-<input type="range" class="range">
+      <div class="slider">
+        <div class="progress" @click="uScore"></div>
+      </div>
+      <div class="range-input">
+        <input type="range" ref="rangeone" class="range-min" min="0" max="360"  v-model="minRuntime">
+        <input type="range" ref="rangetwo" class="range-max" min="0" max="360"  v-model="maxRuntime">
+      <div class="uscoreBack">
+        <p>0</p><p>120</p><p class="trisest">240</p><p class="trisest">360</p>
+      </div>
+      </div>
 </div>
 <div class="contentfilter">
 <p for="">Keywords</p>
@@ -133,12 +156,12 @@
 </div>
 </div>
 </div>
-<button class="submit" @click="submit" :class="{filterColor:filterTrue}">Submit</button>
+<button class="submit" @click="submit">Submit</button>
 
 </div>
 </div>
 <div class="right">
-<div class="movies" v-if="popular">
+<div class="movies" v-if="popular" ref="movies">
 <div class="movie" v-for="(movie) in popular" :key="movie">
 <div class="morebutton" @click="more(movie)" ref="morebutton"></div>
 <div class="more" :class="{activeMore:movie.active}">
@@ -208,27 +231,39 @@ data(){
         isActiveThree:false,
         genres:'',
         genre:[],
-        sort:null,
-        vagte:null,
-        valte:null,
+        sort:'',
         odGodina:'',
         doGodina:'',
-        keywords:null,
+        keywords:'',
         sProvider:'',
         wProviders:'',
         avaliableRegions:'',
         regionData:'',
         pagenext:[],
         page:[],
-        filterTrue:false,
         number:2,
         activee:false,
-        activeMovies:[]
+        activeMovies:[],
+        uScoreOne:0,
+        uScoreTwo:10,
+        votemin:0,
+        minRuntime:0,
+        maxRuntime:360,
     }
 },
-computed:{
-},
 methods:{
+  gap(){
+    let razlika = 1
+    if(this.uScoreTwo < this.uScoreOne ){
+      this.uScoreOne = this.uScoreTwo
+    }
+  },
+  gapTwo(){
+    let razlika = 1
+    if(this.uScoreTwo < this.uScoreOne ){
+      this.uScoreTwo = this.uScoreOne 
+    }
+  },
   disable(movie){
     if(movie.active){
       movie.active = !movie.active
@@ -246,23 +281,24 @@ methods:{
     })
   },
           submit(){
-                  const jedan = document.getElementsByClassName("odSlider")
-        this.vagte = jedan[0].value
-                const dva = document.getElementsByClassName("doSlider")
-        this.valte = dva[0].value
-          axios.get('https://api.themoviedb.org/3/discover/movie?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&sort_by='+this.sort+'&include_adult=false&include_video=false&page=1&primary_release_date.gte='+this.odGodina+'&'+'&primary_release_date.lte='+this.doGodina+'&'+'&vote_average.gte='+this.vagte+'&'+'&vote_average.lte='+this.valte+'&'+this.genre+'&watch_region='+this.regionData+'&with_watch_providers='+this.sProvider+'&with_genres='+this.genre+'&'+'with_keywords='+this.keywords)
+
+          axios.get('https://api.themoviedb.org/3/discover/movie?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&sort_by='+this.sort+'&include_adult=false&include_video=false&page=1&primary_release_date.gte='+this.odGodina+'&'+'&primary_release_date.lte='+this.doGodina+'&'+'&vote_average.gte='+this.uScoreOne+'&'+'&vote_average.lte='+this.uScoreTwo+'&'+this.genre+'&watch_region='+this.regionData+'&with_watch_providers='+this.sProvider+'&with_genres='+this.genre+'&'+'with_keywords='+this.keywords+'&vote_count.gte='+this.votemin+'&with_runtime.gte='+this.minRuntime+'&with_runtime.lte='+this.maxRunTime)
           .then((response)=>{
             this.popular = response.data.results
           })
           console.log(this.genre)
           console.log(this.odGodina)
           console.log(this.doGodina)
-          console.log(this.vagte)
-          console.log(this.valte)
+
           console.log(this.regionData)
           console.log(this.sProvider)
           console.log(this.sort)
           console.log(this.keywords)
+          console.log(this.uScoreOne)
+          console.log(this.uScoreTwo)
+          console.log(this.votemin)
+          console.log(this.maxRuntime)
+          console.log(this.minRuntime)
       },
       selectProvider(provider){
         this.filterTrue = true
@@ -481,9 +517,10 @@ margin-top: 5px;
     border-radius: 30px;
     border: none;
     font-weight: bold;
-    color: gray;
+    color: white;
     margin-top: 20px;
-    pointer-events: none;
+    cursor: pointer;
+    background: #01b4e4;
 }
 .filteronecontent{
     background: white;
@@ -824,12 +861,6 @@ margin-top: 5px;
   font-size: 20px;
   cursor: pointer;
 }
-.filterColor{
-  background: #01b4e4;
-  color: white;
-  cursor: pointer;
-  pointer-events: all;
-}
 .questionMark{
   width: 16px;
   height: 16px;
@@ -840,7 +871,6 @@ margin-top: 5px;
 .qMark{
   display: flex;
   flex-direction: row;
-  width: 200px;
   height: 50px;
   position: relative;
 }
@@ -932,22 +962,72 @@ margin-top: 5px;
   filter: blur(20px);
 }
 .slider{
-  width: 200px;
-  height: 40px;
+  height: 5px;
   position: relative;
-  margin-left: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  width: 215px;
+  margin-left: 15px;
+  margin-right: 20px;
 }
-.sliderone{
+
+.range-input{
   position: relative;
-  width: 200px;
-  background: none;
-  -webkit-appearance: none;
+  margin-left: 12px;
+  margin-right: 15px;
+  margin-bottom: 20px;
 }
-.slidertwo{
+.range-input input{
   position: absolute;
-  bottom: 20px;
-  width: 200px;
+  width: 220px;
+  height: 3px;
+  top: -6px;
   background: none;
+  pointer-events: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
+  z-index: 2;
+
+}
+input[type="range"]::-webkit-slider-thumb{
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  background: #01b4e4;
+  pointer-events: auto;
+  -webkit-appearance: none;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  cursor: pointer;
+  z-index: 5;
+}
+input[type="range"]::-moz-range-thumb{
+  height: 17px;
+  width: 17px;
+  border: none;
+  border-radius: 50%;
+  background: #01b4e4;
+  pointer-events: auto;
+  -moz-appearance: none;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  cursor: pointer;
+  z-index: 5;
+}
+input[type="range"]::-webkit-slider-thumb:hover{
+outline: 3px solid rgb(134, 217, 255);
+}
+.uscoreBack{
+  display: flex;
+  flex-direction: row;
+  width:215px;
+  position: absolute;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  left: 5px;
+}
+.uscoreBack p{
+  margin: 0;
+  color: lightgray;
+  font-weight: 100;
+
 }
 </style>
