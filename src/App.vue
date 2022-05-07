@@ -15,7 +15,7 @@
       <div class="dropdown">
       <router-link to="/"><a href="#">TV Shows</a></router-link>
         <div class="dropdowncontent">
-          <a href="#">Popular</a>
+          <a href="#" @click="toPopular">Popular</a>
           <a href="#">Now Playing</a>
           <a href="#">Upcoming</a>
           <a href="#">Top Rated</a>
@@ -30,8 +30,8 @@
       <router-link to="/"><a href="#">More</a></router-link> 
       </div>
       <div class="right">
-      <router-link to="/"><a href="#">Login</a></router-link> 
-      <router-link to="/"><a href="#">Sign Up</a></router-link> 
+      <router-link to="/login"><a href="#">Login</a></router-link> 
+      <router-link to="/"><a href="#" @click="register">Sign Up</a></router-link> 
       <router-link to="/"><img class="search" src="./assets/search.svg" alt="search"></router-link> 
       </div>
     </div>
@@ -78,6 +78,21 @@
     </div>
   </footer>
 </template>
+<script>
+
+
+export default {
+methods:{
+  register(){
+    window.location.href = "https://www.themoviedb.org/signup"
+  },
+  toPopular(){
+    this.$router.push('/tvpopular')
+  }
+}
+}
+</script>
+
 <style>
 body{
   margin: 0;
@@ -139,7 +154,6 @@ nav a{
   padding-bottom: 10px;
   border: 1px solid lightgray;
   z-index: 2;
-
 }
 .dropdowncontent a{
   margin: 0;
@@ -150,6 +164,7 @@ nav a{
   font-size: 1rem;
   padding-top: 5px;
   padding-bottom: 5px;
+
 }
 .dropdown:hover .dropdowncontent{
   display: flex;

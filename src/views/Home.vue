@@ -1,5 +1,6 @@
 <template>
-<div class="box">
+<div class="all">
+<div class="box" v-if="popular">
 <div class="tekst">
 <h1>Welcome.</h1>
 <h2>Millions of movies, TV shows and people to discover. Explore now.</h2>
@@ -62,6 +63,7 @@
 </div>
 </div>
 </div>
+</div>
 </template>
 
 <script>
@@ -93,6 +95,9 @@ created(){
 <style scoped>
 body{
   margin: 0;
+}
+.all{
+  min-height: 1500px;
 }
 .box{
   width: 1300px;
@@ -201,7 +206,7 @@ body{
   display: flex;
   width: 180px;
   height: 30px;
-  border: 1px solid gray;
+  border: 1px solid #0d253f;
   background: white;
   border-radius: 30px;
   align-items: center;
