@@ -38,7 +38,7 @@
   </nav>
   <router-view/>
   <footer>
-    <div class="footer">
+    <div class="footer" v-if="false">
       <div class="footercontent">
         <div class="fcontent">
         <div class="footerleft">
@@ -114,7 +114,7 @@ nav a{
   color: white;
 }
 .content{
-  width: 1220px;
+  width: 1350px;
   height: 40px;
   justify-content: space-between;
   display: flex;
@@ -153,7 +153,7 @@ nav a{
   padding-top: 10px;
   padding-bottom: 10px;
   border: 1px solid lightgray;
-  z-index: 2;
+  z-index: 3;
 }
 .dropdowncontent a{
   margin: 0;

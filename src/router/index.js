@@ -4,6 +4,7 @@ import Popularmovies from '../views/movies/Popular.vue'
 import Login from '../views/Login.vue'
 import Populartv from '../views/tv/Populartv.vue'
 import Search from '../views/Search.vue'
+import Moviedetails from '../views/Moviedetails.vue'
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/search',
     name: 'Search',
     component: Search
+  },
+  {
+    path: '/movie/:id',
+    name: 'Moviedetails',
+    component: Moviedetails
   },
 
 ]
