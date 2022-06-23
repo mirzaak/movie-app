@@ -33,7 +33,7 @@
 </div>
 <div class="filtertwocontent">
 <div class="contentfilter">
-<span class="qMark"><p>Show Me</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">Login to filter items you've watched.</span></span></span>
+<span class="qMark"><p>Show Me</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">Login to filter items you've watched.<div class="tip"></div></span></span></span>
 <label class="container" @click="toggleSubmitBlue">
   <input type="radio" name="radio">
   <span class="checkmark"></span>
@@ -78,7 +78,7 @@
 <p>Certification</p>
 </div>
 <div class="contentfilter">
-<span class="qMark"><p>Language</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">No Database for languages</span></span></span>
+<span class="qMark"><p>Language</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">No Database for languages <div class="tipTwo"></div></span></span></span>
 </div>
 <div class="contentfilter">
 <p>User Score</p>
@@ -99,9 +99,9 @@
         <div class="progress" @click="uScore"></div>
       </div>
       <div class="range-input">
-        <input type="range" ref="rangeone" class="range-min" min="0" max="10"  v-model="votemin" @change="toggleSubmitBlue">
+        <input type="range" ref="rangeone" class="range-min" min="0" max="500"  v-model="votemin" @change="toggleSubmitBlue">
       <div class="uscoreBack">
-        <p>0</p><p>5</p><p>10</p>
+        <p>0</p><p>250</p><p>500</p>
       </div>
       </div>
 </div>
@@ -136,7 +136,7 @@
 </div>
 <div class="filterthreecontent">
 <div class="contentfilter">
-<span class="qMark"><p>Show Me</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">Login to filter items you've watched.</span></span></span>
+<span class="qMark"><p>Show Me</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">Login to filter items you've watched.<div class="tipThree"></div></span></span></span>
 <label class="jedan">
   <input type="checkbox" checked="checked">
   <span class="dva"></span>
@@ -161,27 +161,27 @@
 </div>
 <div class="right" ref="right">
 <div class="movies" v-if="popular" @click.self="outsideMore">
-<div class="movie" v-for="(movie) in popular.results" :key="movie">
-<div class="morebutton" @click="more(movie)" ref="morebutton"></div>
+<div class="movie"  v-for="(movie) in popular.results" :key="movie">
+<img class="morebutton" ref="morebutton" @click="more(movie)" src="../cirlceDots.svg" alt="">
 <div class="more" :class="{activeMore:movie.active}">
   <p>Want to rate or add this item to a list?</p>
-  <a>Login</a>
+  <a @click="toLogin()">Login<img src="../strelica.svg" alt=""></a>
 <div class="line"></div>
   <p>Not a member?</p>
-  <a>Sign up and join the community</a>
+  <a href="https://www.themoviedb.org/signup">Sign up and join the community<img src="../strelica.svg" alt=""></a>
 
 </div>
-<div class="moreback">
-<div class="movieback" :class="{activeMovieback:movie.active}"  @click="disable(movie)">
-<img class="movieposter" @click.self="outsideMore" :src="slika + movie.poster_path" alt="" >
-<div class="percentage"><circle-progress class="circle" :percent="movie.vote_average*10" :size="200" fill-color="green" empty-color="none" /><p class="percentagebroj">{{movie.vote_average*10}}</p><a>%</a></div>
+<div class="moreback" >
+
+<img class="movieposter" :src="slika + movie.poster_path" alt="" @click="toMovie(movie.id)" >
+<div class="percentage"><circle-progress class="circle" :percent="movie.vote_average*10" :size="200" fill-color="#1ed5a9" empty-color="empty" /><p class="percentagebroj">{{movie.vote_average*10}}</p><a>%</a></div>
 <div class="card">
-<h2><a href="#">{{movie.original_title}}</a></h2>
+<h2><a href="#" @click="toMovie(movie.id)">{{movie.original_title}}</a></h2>
 <p>{{movie.release_date}}</p>
 </div>
-</div>
-</div>
 
+</div>
+<div class="movieback" :class="{activeMovieback:movie.active}"  @click="disable(movie)"></div>
 </div>
 
 
@@ -197,6 +197,7 @@
 </template>
 
 <script>
+import { useRouter, useRoute } from 'vue-router'
 import {ref, onMounted, onUnmounted} from 'vue';
 import "vue3-circle-progress/dist/circle-progress.css";
 import CircleProgress from "vue3-circle-progress";
@@ -205,6 +206,8 @@ import axios from 'axios'
 export default {
   components:{CircleProgress},
 setup(){
+  const route = useRoute()
+  const router = useRouter()
   const popular = ref([])
   const morePopular = ref([])
   let number = 2
@@ -214,7 +217,7 @@ setup(){
   let isActiveOne = ref(false)
   let isActiveTwo = ref(false)
   let isActiveThree = ref(false)
-  let sort = ref('popularity.asc')
+  let sort = ref('popularity.desc')
   let odGodina = ref('')
   let doGodina = ref('')
   let keywords = ref([])
@@ -249,7 +252,7 @@ setup(){
     try{
       let popularData = await axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page=1')
       popular.value = await popularData.data
-      console.log(popular)
+
     }
     catch(err){}
   }
@@ -260,7 +263,7 @@ setup(){
       let moreData = await axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page='+number++)
       morePopular.value = await moreData.data
       popular.value.results = popular.value.results.concat(morePopular.value.results)
-      console.log(morePopular.value)
+
     }
     catch(err){}
     window.addEventListener("scroll",handleScroll)
@@ -268,7 +271,7 @@ setup(){
 
   const submit = async() => {
           try{
-            let submitData = await fetch('https://api.themoviedb.org/3/discover/movie?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&sort_by='+sort.value+'&include_adult=false&include_video=false&page=1&primary_release_date.gte='+odGodina.value+'&primary_release_date.lte='+doGodina.value+'&vote_average.gte=5&vote_average.lte=9&watch_region='+regionData.value+'&with_watch_providers='+sProvider.value+'&with_genres='+genre.value+'&with_keywords='+keywords.value+'&vote_count.gte='+votemin.value+'&with_runtime.gte='+minRuntime.value+'&with_runtime.lte='+maxRuntime.value)
+            let submitData = await fetch('https://api.themoviedb.org/3/discover/movie?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&sort_by='+sort.value+'&include_adult=false&include_video=false&page=1&primary_release_date.gte='+odGodina.value+'&primary_release_date.lte='+doGodina.value+'&vote_average.gte='+uScoreOne.value+'&vote_average.lte='+uScoreTwo.value+'&watch_region='+regionData.value+'&with_watch_providers='+sProvider.value+'&with_genres='+genre.value+'&with_keywords='+keywords.value+'&vote_count.gte='+votemin.value+'&with_runtime.gte='+minRuntime.value+'&with_runtime.lte='+maxRuntime.value)
             popular.value = await submitData.json()
           }
           
@@ -424,12 +427,22 @@ for (i = 0; i < acc.length; i++) {
 
   const handleSticky = () => {
           let submitElement = submitButton.value
-          if(submitElement.getBoundingClientRect().top >= 0 && submitElement.getBoundingClientRect().left >= 0 && submitElement.getBoundingClientRect().right <= window.innerWidth && submitElement.getBoundingClientRect().bottom <= window.innerHeight){
-            stickyActive.value = true
-          }
-          else{
+          if(        submitElement.getBoundingClientRect().top >= 0 &&
+        submitElement.getBoundingClientRect().left >= 0 &&
+        submitElement.getBoundingClientRect().bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        submitElement.getBoundingClientRect().right <= (window.innerWidth || document.documentElement.clientWidth)){
             stickyActive.value = false
           }
+          else{
+            stickyActive.value = true
+          }
+  }
+  
+  const toMovie = (id) => {
+        router.push({ name: 'Moviedetails', params: { id: id }}) 
+  }
+  const toLogin = () => {
+        router.push({ name: 'Login'}) 
   }
 
 
@@ -489,7 +502,9 @@ for (i = 0; i < acc.length; i++) {
     stickyRef,
     submitButton,
     handleSticky,
-    outsideMore
+    outsideMore,
+    toMovie,
+    toLogin
   }
 }
 }
@@ -521,6 +536,9 @@ for (i = 0; i < acc.length; i++) {
     height: 270px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    cursor: pointer;
+
+
     
 }
 .movie{
@@ -595,7 +613,7 @@ for (i = 0; i < acc.length; i++) {
 .card h2{
   font-size: 1em;
   margin: 0;
-  margin-top: 22px;
+  margin-top: 10px;
   padding-left: 10px;
 }
 .card p{
@@ -604,6 +622,12 @@ for (i = 0; i < acc.length; i++) {
     margin: 10px;
     margin-top: 0;
 }
+.filteronecontent select:hover{
+    background: lightgray;
+}
+.contentfilter select:hover{
+    background: lightgray;
+}
     .percentage{
     background: #0d253f;
     height: 38px;
@@ -611,8 +635,9 @@ for (i = 0; i < acc.length; i++) {
     display: flex;
     position: absolute;
     border-radius: 34px;
-    margin-top: 250px;
-    margin-left: 10px;
+    top: 245px;
+    left: 15px;
+
     }
 .circle{
   padding: 2px;
@@ -620,16 +645,18 @@ for (i = 0; i < acc.length; i++) {
 .percentagebroj{
   position: absolute;
   align-self: center;
-  right: 14.5px;
+  right: 14px;
 
 }
+
 .percentage p{
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: bold;
   color: white;
 }
 .percentage a{
 margin-top: 5px;
-  left: 15px;
+  left: 14px;
   font-size: 7px;
   color: white;
   position: absolute;
@@ -682,7 +709,7 @@ margin-top: 5px;
     margin-left: 15px;
     margin-top: 15px;
     margin-bottom: 10px;
-    font-weight: 100;
+    font-weight: 400;
 }
 .filteronecontent select{
     width: 220px;
@@ -722,11 +749,11 @@ margin-top: 5px;
     border-bottom-right-radius: 10px;
 }
 .filtertwocontent label{
-    font-weight: 200;
+    font-weight: 400;
     margin-left: 10px;
 }
 .filtertwocontent p{
-    font-weight: 200;
+    font-weight: 400;
     margin-left: 10px;
 }
 .contentfilter{
@@ -893,7 +920,7 @@ margin-top: 5px;
     margin-bottom: 10px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    font-weight: 200;
+    font-weight: 400;
 }
 .contentfilter p{
     font-size: 15px;
@@ -901,7 +928,7 @@ margin-top: 5px;
     margin-left: 15px;
     margin-top: 15px;
     margin-bottom: 10px;
-    font-weight: 100;
+    font-weight: 400;
 }
 .filterthreecontent select{
     width: 220px;
@@ -925,11 +952,11 @@ margin-top: 5px;
     border-bottom-right-radius: 10px;
 }
 .filterthreecontent label{
-    font-weight: 200;
+    font-weight: 400;
     margin-left: 10px;
 }
 .filterthreecontent p{
-    font-weight: 200;
+    font-weight: 400;
     margin-left: 10px;
 }
 .from{
@@ -1021,13 +1048,37 @@ margin-top: 5px;
   height: 25px;
   background: #0d253f;
   position: absolute;
-  bottom: 35px;
+  bottom: 45px;
   right: 45px;
   color: white;
   align-items: center;
   border-radius: 5px;
   display: none;
-  padding: 5px;
+  padding: 10px;
+}
+.tip{
+    position: absolute;
+    border: 10px solid transparent;
+    border-top-color:#0d253f;
+    bottom: -20px;
+    left: 75px;
+
+}
+.tipTwo{
+    position: absolute;
+    border: 10px solid transparent;
+    border-top-color:#0d253f;
+    bottom: -20px;
+    left: 67px;
+
+}
+.tipThree{
+    position: absolute;
+    border: 10px solid transparent;
+    border-top-color:#0d253f;
+    bottom: -20px;
+    left: 70px;
+
 }
 .markHover{
   width: 10px;
@@ -1056,10 +1107,10 @@ margin-top: 5px;
 }
 .more{
   width: 280px;
-  height: 180px;
+  height: 200px;
   background: white;
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   left: 15px;
   top: 35px;
   display: none;
@@ -1068,13 +1119,24 @@ margin-top: 5px;
   border-radius: 5px;
   overflow: visible;
 
+
+}
+.more img{
+  width: 15px;
+  height: 15px;
+  margin-top: 3px;
+
 }
 .more p,a{
   padding-left: 10px;
 }
 .more a{
+  display: flex;
   width: 262px;
   cursor: pointer;
+  align-items: center;
+  color: gray;
+  text-decoration: none;
 
 }
 .more a:hover{
@@ -1091,21 +1153,33 @@ margin-top: 5px;
 
 }
 .morebutton{
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   border-radius: 20px;
   position: absolute;
-  background: white;
-  top: 10px;
+  opacity: 0.5;
+  top: 8px;
   left: 145px;
   cursor: pointer;
-  opacity: 0.4;
+
 }
 .activeMore{
   display: flex;
 }
 .activeMovieback{
-  filter: blur(20px);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+
+    backdrop-filter: blur(20px);
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    z-index: 2;
+    transition: linear .1s;
+
 }
 .slider{
   height: 5px;

@@ -1,11 +1,30 @@
 <template>
 <div class="header">
-<span>Overview</span>
-<span>Media</span>
-<span>Fandom</span>
-<span>Share</span>
+        <span><div class="overview"><a>Overview</a> <div class="arrow"></div></div><div class="headerDropdown">
+            <router-link :to="{ name: 'Moviedetails', params: { id: id }}">Main</router-link>
+            <router-link :to="{ name: 'AlternativeTitles', params: { id: id }}">Alternative Titles</router-link>
+            <router-link :to="{ name: 'CastAndCrew', params: { id: id }}">Cast & Crew</router-link>
+            <router-link :to="{ name: 'ReleaseDates', params: { id: id }}">Release Dates</router-link>
+            <router-link :to="{ name: 'Translations', params: { id: id }}">Translations</router-link>
+            <router-link :to="{ name: 'Changes', params: { id: id }}">Changes</router-link>
+            </div></span>
+        <span><div>Media <div class="arrow"></div></div><div class="headerDropdown">
+            <a>Backdrops</a>
+            <a>Logos</a>
+            <a>Posters</a>
+            <a>Videos</a>
+            </div></span>
+        <span><div>Fandom <div class="arrow"></div></div><div class="headerDropdown">
+            <a>Discussions</a>
+            <a>Reviews</a>
+            </div></span>
+        <span><div>Share <div class="arrow"></div></div><div class="headerDropdown">
+            <a>Share Link</a>
+            <a>Facebook</a>
+            <a>Tweet</a>
+            </div></span>
 </div>
-<div class="main">
+<div v-if="data" class="main">
     <div class="behindmain">
         <img :src=" slika + data.backdrop_path" alt="">
     </div>
@@ -13,9 +32,12 @@
         <div class="left">
             <div class="posterback">
             <div class="poster">
+                
                 <img :src=" slika + data.poster_path" alt="">
             </div>
+           
             </div>
+        <span class="expand"><img src="../assets/expand.svg" alt="">Expand</span> 
         </div>
         <div class="right">
             <div class="rightup">
@@ -82,16 +104,16 @@
                 
                 
                 
-                <div class="overview">
+                <div class="overviewB">
                     <a>{{data.tagline}}</a>
                     <p>Overview</p>
                     <p>{{data.overview}}</p>
                 </div>
                 <div class="frontglumci">
-                    <div class="frontGlumac" v-for="index in 6" :key="index">
-                        <a>{{credits.cast[index].name}}</a>
-                        <p>{{credits.cast[index].known_for_department}}</p>
-
+                    <div class="frontGlumac" v-for="index in fourCredits" :key="index">
+                        <a>{{index.name}}</a>
+                        <p>{{index.known_for_department}}</p>
+                        
                     </div>
                 </div>
             </div>
@@ -107,36 +129,43 @@
 <div class="other">
     <div class="otherleft">
             <span class="actorsHeader"><h1>Top Billed Cast</h1></span>
-                <div class="actorssection" @scroll="fadeFunction">
+            <div class="actorFade">
+                <div class="actorssection" v-if="credits"> 
             <div class="actors">
-            <div class="actor" v-for="actor in 8" :key="actor">
-            <div class="actorCard">
-                <img :src="slika + credits.cast[actor].profile_path" alt="">
-                <p><a>{{credits.cast[actor].name}}</a></p>
-                <p>{{credits.cast[actor].character}}</p>
+            <div class="actor" v-for="glumac in credits" :key="glumac">
+            <div class="actorCard" v-if="glumac">
+                <div>
+                <img :src="slika + glumac.profile_path" alt=""><img class="noImage" v-if="glumac.profile_path==null" src="./person.svg" alt="">
+                </div>
+                <p><a>{{glumac.original_name}}</a></p>
+                <p>{{glumac.character}}</p>
             </div>
-            
+      
             </div>
                 <div class="lastActorCard">View more</div>
+
             </div>
-                <div class="fade" ref="fade"></div>
+
+                            
+                </div>
+                <div class="fade"></div>
                 </div>
             
         <a>Full Cast & Crew</a>
-        <div class="reviewsection">
+        <div class="reviewsection" v-if="review">
                     <div class="reviews">
             <span class="reviewheader"><h1>Social</h1><h2>Reviews</h2><h2>Discussions</h2></span>
             <div class="review">
                 <div class="reviewcard">
-                <span class="reviewPrviRed"><img :src="data.reviews.results[0].author_details.avatar_path.substring(1)" alt=""><div class="reviewProstor" ></div>
+                <span class="reviewPrviRed"><img :src="revjuSlika" alt=""><div class="reviewProstor" ></div>
                 <span class="reviewPrviRedText">
-                <span class="reviewPrviRedTextRate"><h3><a>{{data.reviews.results[0].author}}</a></h3><div class="reviewrate" v-if="data.reviews.results[0].author_details.rating">{{data.reviews.results[0].author_details.rating}}</div></span>
-                <h5>Written by <a>{{data.reviews.results[0].author}}</a> on <a>{{data.reviews.results[0].created_at}}</a></h5>
+                <span class="reviewPrviRedTextRate"><h3><a>{{review.author}}</a></h3><div class="reviewrate">{{revjuRating}}</div></span>
+                <h5>Written by <a>{{review.author}}</a> on <a>{{review.created_at}}</a></h5>
                 </span>
                 </span>
                 
                 <div class="reviewcontent">
-                <p>{{data.reviews.results[0].content}}</p><a>read the rest.</a>
+                <p>{{review.content}}</p><a>read the rest.</a>
                 </div>
                 </div>
             </div>
@@ -144,32 +173,40 @@
         </div>
         </div>
         <div class="mediasection">
-        <span class="mediaheader"><h1>Media</h1><h2  @click="comp='MostPopular'" :class="{selectedMedia:comp = 'MostPopular'}">Most Popular</h2><h2 @click="comp='MostPopular'" :class="{selectedMedia:comp.value = MostPopular}">Videos</h2><h2 @click="comp='Backdrops'">Backdrops</h2><h2 @click="comp='Posters'">Posters</h2></span>
-        <div class="media" >
-            <component :is="comp"></component>
+        <span class="mediaheader"><h1>Media</h1><h2  @click="comp='MostPopular'" :class="{selectedMedia:comp==='MostPopular'}">Most Popular</h2><h2 @click="comp='Media'" :class="{selectedMedia:comp==='Media'}">Videos</h2><h2 @click="comp='Backdrops'" :class="{selectedMedia:comp==='Backdrops'}">Backdrops</h2><h2 @click="comp='Posters'" :class="{selectedMedia:comp==='Posters'}">Posters</h2></span>
+        <div class="media">
+            <component :is="comp"/>
+
+                
+                
         </div>
+        <div class="fade"></div>
         </div>
-        <div class="collectionsection">
-            <div class="collection">
-                <h1>Collection</h1>
-                <img :src=" slika + data.backdrop_path" alt="">
-            </div>
-        </div>
+
         <div class="recommendationssection">
-            
+            <div class="recommendationHeader"><h1>Recommendations</h1></div>
+            <div class="recommendationWrapper">
             <div class="recommendation" v-for="predlozeno in recommendations.results" :key="predlozeno">
                 <img :src="slika + predlozeno.backdrop_path" alt="">
                 <a>{{predlozeno.original_title}}</a>
             </div>
+        
         </div>
+        <div class="fade"></div>     
+            
+          
+        </div>
+         
     </div>
     <div class="otherright">
 
     </div>
 </div>
+<Footer/>
 </template>
 
 <script>
+import Footer from './Footer.vue'
 import Media from '../views/Moviedetailscomponents/Media.vue'
 import Backdrops from '../views/Moviedetailscomponents/Backdrops.vue'
 import MostPopular from '../views/Moviedetailscomponents/MostPopular.vue'
@@ -186,11 +223,13 @@ export default {
         Backdrops,
         MostPopular,
         Posters,
+        Footer,
         CircleProgress
     },
 setup(){
     const router = useRouter()
     const route = useRoute()
+
 
     const slika = ref('https://image.tmdb.org/t/p/original/')
     const data = ref([])
@@ -200,12 +239,21 @@ setup(){
     const videoUrl = ref('https://www.youtube.com/embed/')
     const id = route.params.id
     let backdropActive = ref(false)
-    const comp = shallowRef(Media)
+    const comp = shallowRef('MostPopular')
     const recommendations = ref([])
     const fade = ref(null)
+    const review = ref([])
+    const details = ref([])
+    const revjuSlika = ref([])
+    const revjuRating = ref([])
+    const fourCredits = ref([])
+    const overlayOn = ref(false)
 
 
-
+    const overlayToggle = () => {
+        overlayOn.value = !overlayOn.value
+        console.log('overlay')
+    }
     const loadData = async() => {
     try{
       let movieData = await axios.get('https://api.themoviedb.org/3/movie/'+ id +'?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&append_to_response=reviews')
@@ -214,11 +262,32 @@ setup(){
     }
     catch(err){}
     }
+    const loadReview = async() => {
+    try{
+      let reviewData = await axios.get('https://api.themoviedb.org/3/movie/'+ id +'?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&append_to_response=reviews')
+      review.value = await reviewData.data.reviews.results[0]
+      details.value = await reviewData.data.reviews.results[0].author_details
+      revjuSlika.value = await reviewData.data.reviews.results[0].author_details.avatar_path.substring(1)
+      revjuRating.value = await reviewData.data.reviews.results[0].author_details.rating
+      console.log(review.value)
+    }
+    catch(err){}
+    }
 
     const loadCredits = async() => {
         try{
             let creditsData = await axios.get('https://api.themoviedb.org/3/movie/'+ id +'/credits?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US')
-            credits.value = await creditsData.data
+            credits.value = await creditsData.data.cast
+            credits.value.length = 8
+        }
+        catch(err){}
+        console.log(credits.value)
+    }
+    const loadFourCredits = async() => {
+        try{
+            let creditsAData = await axios.get('https://api.themoviedb.org/3/movie/'+ id +'/credits?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US')
+            fourCredits.value = await creditsAData.data.cast
+            fourCredits.value.length = 4
         }
         catch(err){}
         console.log(credits.value)
@@ -241,9 +310,7 @@ setup(){
         console.log(recommendations.value)
     }
 
-    const fadeFunction = () => {
-        console.log(fade.value)
-    }
+
 
 
 
@@ -255,6 +322,9 @@ setup(){
 loadData()
 loadImages()
 loadCredits()
+loadRecommendations()
+loadReview()
+loadFourCredits()
 return{
     data,
     slika,
@@ -268,9 +338,16 @@ return{
     Posters,
     comp,
     recommendations,
-    fade,
-    fadeFunction,
-    backdropActive
+    backdropActive,
+    review,
+    details,
+    revjuSlika,
+    revjuRating,
+    fourCredits,
+    overlayToggle,
+    overlayOn,
+    id
+    
 
 }
 }
@@ -278,16 +355,80 @@ return{
 </script>
 
 <style scoped>
+.overlay {
+  position: fixed; /* Sit on top of the page content */
+
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
 .header{
-    height: 45px;
+    border-bottom: 1px solid lightgray;
+    width: 100%;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+.header span:hover .headerDropdown{
+    display: flex;
+}
+.headerDropdown{
+    background: white;
+    border: 1px solid lightgray;
+    display: none;
+    position: absolute;
+    top: 100px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    flex-direction: column;
+    border-radius: 5px;
+    z-index: 3;
+}
+.headerDropdown a{
+    height: 30px;
+    align-items: center;
+    display: flex;
+    padding-left: 20px;
+    padding-right: 60px;
+    color: black;
+    text-decoration: none;
+    font-size: 17px;
+}
+.headerDropdown a:hover{
+    background: lightgrey;
+}
 .header span{
-    margin-left: 20px;
     margin-right: 20px;
+    margin-left: 20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.arrow {
+  margin-left: 5px;
+  margin-bottom: 3px;
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 2px;
+   transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+.overview{
+    display: flex;
+    align-items: center;
+    height: 35px;
+    border-bottom: 5px solid #01b4e4;
 }
 .main{
     height: 510px;
@@ -318,18 +459,37 @@ return{
     width: 1350px;
     color: white;
 }
+
 .poster img{
     height: 450px;
     z-index: 2;
     border-radius: 10px;
+
 }
 .poster:hover{
     filter: blur(10px);
     cursor: pointer;
 }
+.left:hover .expand{
+    display: flex;
+    pointer-events: none;
+}
+.expand{
+    position: absolute;
+    z-index: 4;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 115px;
+    display: none;
+
+}
+.expand img{
+    width: 15px;
+}
 .posterback{
     overflow: hidden;
     border-radius: 10px;
+
 }
 .rednaslova{
     display: flex;
@@ -343,6 +503,8 @@ return{
 .hajedan{
     opacity: 0.7;
     margin-left: 5px;
+    font-weight: 400;
+    cursor: auto;
 }
 .right{
     display: flex;
@@ -367,6 +529,7 @@ return{
     flex-wrap: wrap;
     width: 900px;
     margin-top: 20px;
+    position: relative;
 
 
 }
@@ -407,6 +570,7 @@ return{
 }
 .actors{
     display: flex;
+    position: relative;
 
 }
 .actorCard{
@@ -419,9 +583,15 @@ return{
     box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
     font-family: 'Source Sans Pro', Arial, sans-serif;
     font-size: 1em;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     width: 138px;
     height: 100%;
+}
+.sectionFade{
+    position: relative;
+    width: 100%;
+    height: 100%;
+
 }
 .actorCard img{
     cursor: pointer;
@@ -431,7 +601,7 @@ return{
 }
 .actorCard p{
     margin: 0;
-    padding: 10px;
+    padding-left: 10px;
     padding-bottom: 0;
     font-size: 0.8em;
 
@@ -440,9 +610,13 @@ return{
     font-weight: bold;
 }
 .actorsHeader{
-    height: 40px;
-    font-size: 8px;
-    margin-top: 10px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+}
+.actorsHeader h1{
+    font-size: 1.4em;
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -460,6 +634,7 @@ return{
 }
 .reviewheader h1{
     margin-right: 20px;
+    font-size: 1.4em;
 }
 .reviewheader h2{
     cursor: pointer;
@@ -485,45 +660,59 @@ return{
     padding-bottom: 20px;
     border-top: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
+    position: relative;
 }
 .mediaheader{
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-bottom: 10px;
 }
 .mediaheader h2{
     cursor: pointer;
-    margin-right: 10px;
+    margin-right: 20px;
+    font-size: 1.1em;
+
 }
 .mediaheader h1{
-    margin-right: 10px;
+    margin-right: 50px;
+    font-size: 1.4em;
 }
 .media{
-    height: 320px;
+    height: 300px;
     width: 100%;
     display: flex;
     flex-direction: row;
-    overflow: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
     border-top-left-radius: 10px;
+    position: relative;
+}
+.fade{
+    width: 60px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-image: linear-gradient(to right, rgba(255,255,255,0) 0%, #fff 100%);
+    opacity: 1;
+    pointer-events: none;
+
 }
 .videos{
     display: flex;
     flex-direction: row;
 }
-
-.fade{
-    background-image: linear-gradient(to right, rgba(255,255,255,0) 0%, rgb(255, 255, 255) 100%);
-    width: 60px;
-    height: 300px;
-    z-index: 2;
-    position:absolute;
-    margin-left: 970px;
-}
 .actorssection{
     display: flex;
     overflow: auto;
     margin-bottom: 20px;
+    position: relative;
+    width: 1030px;
 
+}
+.actorFade{
+    position: relative;
 }
 .lastActorCard{
     height: 93%;
@@ -538,16 +727,8 @@ return{
 .review img{
     border-radius: 50px;
 }
-.reviewheader h1{
-    font-size: 1.1em;
-}
+
 .reviewheader h2{
-    font-size: 1em;
-}
-.mediaheader h1{
-    font-size: 1.1em;
-}
-.mediaheader h2{
     font-size: 1em;
 }
 .reviewcontent a{
@@ -600,30 +781,50 @@ return{
     color: white;
     margin-left: 10px;
     align-items: center;
+    justify-content: center;
 }
 .collectionsection{
     margin-top: 20px;
     height: 400px;
-    width: 100%;
+
     border: 1px solid lightgray;
 }
 .recommendationssection{
     margin-top: 20px;
-    height: 200px;
-    width: 100%;
-    border: 1px solid lightgray;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 10px;
+    width: 1030px;
+
+}
+.recommendationWrapper{
+    height: 205px;
+    position: relative;
     display: flex;
     flex-direction: row;
-    overflow: auto;
+    overflow-x: scroll;
+    overflow-y: none;
     border-radius: 10px;
-
+    width: 1030px;
+    flex-direction: row;
+}
+.recommendationHeader h1{
+    font-size: 1.4em;
 }
 .recommendation img{
     width: 300px;
     border-radius: 10px;
+    cursor: pointer;
+}
+.recommendation a{
+    cursor: pointer;
 }
 .recommendation{
     margin-right: 20px;
+
 }
 .collection img{
     width: 100%;
@@ -658,6 +859,7 @@ return{
     align-items: center;
     justify-content: center;
     position: relative;
+    overflow: hidden;
 }
 .circle:hover{
     transform: scale(1.1);
@@ -669,8 +871,8 @@ return{
     font-weight: bold;
     font-size: 20px;
     position: absolute;
-    left: 22px;
-    top: 24px;
+    left: 23px;
+    top: 22px;
 }
 .circle p{
     font-size: 10px;
@@ -751,11 +953,11 @@ return{
     width: 15px;
     height: 15px;
 }
-.overview a{
+.overviewB a{
     opacity: 0.7;
     font-style: italic;
 }
-.overview{
+.overviewB{
     margin-top: 20px;
 }
 .dot{
@@ -782,7 +984,7 @@ return{
     height: 20px;
     background:#081c22;
     position: absolute;
-    bottom: 240px;
+    top: 200px;
     z-index: 5;
     border-radius: 5px;
     align-items: center;
@@ -798,7 +1000,10 @@ return{
     bottom: 20px;
 }
 .selectedMedia{
-    text-decoration: underline;
+    border-bottom: 4px solid black;
+}
+.noImage{
+    height: 207px;
 }
 
 </style>

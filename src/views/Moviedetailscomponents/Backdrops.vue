@@ -1,13 +1,14 @@
 <template>
-<div class="all" v-if="media.backdrops">
-    <div class="media" v-for="video in 6" :key="video">
-    <img v-if="media" :src=" slika + media.backdrops[video].file_path " alt="">
+<div class="all" v-if="media">
+    <div class="media" v-for="video in media.backdrops" :key="video">
+    <img  :src=" slika + video.file_path " alt="">
 </div>
 <div class="viewmore"><h1>View More</h1></div>
 </div>
 </template>
 
 <script>
+
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
@@ -24,6 +25,7 @@ setup(){
         try{
             let imagesData = await axios.get('https://api.themoviedb.org/3/movie/'+ id +'/images?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&include_image_language=en%2Cnull')
             media.value = await imagesData.data
+            media.value.length = 6
         }   
         catch(err){}
         console.log(media.value)

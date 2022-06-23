@@ -1,6 +1,14 @@
 <template>
 <div class="all">
 <div class="box" v-if="popular">
+
+<div class="boxBack">
+
+<img  :src="slika + popular[0].backdrop_path" alt="">
+<div class="backColor">
+</div>
+</div>
+<div class="boxFront">
 <div class="tekst">
 <h1>Welcome.</h1>
 <h2>Millions of movies, TV shows and people to discover. Explore now.</h2>
@@ -10,8 +18,9 @@
 <button class="submit">Search</button>
 </div>
 </div>
-<div class="popularwrap">
-<div class="popular" v-if="popular">
+
+</div>
+<div class="popularwrap" v-if="popular">
 <div class="popularheader">
 <h1>What's Popular</h1>
 <div class="pill">
@@ -23,8 +32,10 @@
 </div>
 </div>
 </div>
+<div class="popular" v-if="popular">
+
 <div class="movies">
-<div class="movie" v-for="movie in popular.results" :key="movie">
+<div class="movie" v-for="movie in popular" :key="movie">
 <div class="card">
 <div class="percentage"><circle-progress class="circle" :percent="movie.vote_average*10" :size="300" fill-color="green" empty-color="none" /><p class="percentagebroj">{{movie.vote_average*10}}</p><a>%</a></div>
 <img class="movieposter" :src=" slika + movie.poster_path" alt="">
@@ -35,11 +46,10 @@
 </div>
 </div>
 </div>
-<div class="box" v-if="popular">
+<div class="boxTrailer" v-if="popular">
 <h1>Trailers</h1>
 </div>
-<div class="popularwrap">
-<div class="populartrending" v-if="popular">
+<div class="popularwrap" v-if="popular">
 <div class="popularheader">
 <h1>Trending</h1>
 <div class="pill">
@@ -51,8 +61,9 @@
 </div>
 </div>
 </div>
+<div class="populartrending" v-if="popular">
 <div class="movies">
-<div class="movie" v-for="movie in now_playing.results" :key="movie">
+<div class="movie" v-for="movie in now_playing" :key="movie">
 <div class="card">
 <div class="percentage"><circle-progress class="circle" :percent="movie.vote_average*10" :size="300" fill-color="green" empty-color="none" /><p class="percentagebroj">{{movie.vote_average*10}}</p><a>%</a></div>
 <img class="movieposter" :src=" slika + movie.poster_path" alt="">
@@ -62,16 +73,19 @@
 </div>
 </div>
 </div>
+
 </div>
 </div>
+<Footer/>
 </template>
 
 <script>
+import Footer from '../views/Footer.vue'
 import axios from 'axios'
 import "vue3-circle-progress/dist/circle-progress.css";
 import CircleProgress from "vue3-circle-progress";
 export default {
-components:{CircleProgress},
+components:{CircleProgress,Footer},
 data(){
   return{
     slika: 'https://image.tmdb.org/t/p/original/',
@@ -82,31 +96,63 @@ data(){
 created(){
     axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page=1')
     .then((response) => {
-    this.popular = response.data
+    this.popular = response.data.results
+    console.log(this.popular)
     })
     axios.get('https://api.themoviedb.org/3/movie/now_playing?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page=1')
     .then((response) => {
-    this.now_playing = response.data
+    this.now_playing = response.data.results
     })
   
 }
 }
 </script>
 <style scoped>
-body{
-  margin: 0;
+.body{
+  position: relative;
 }
-.all{
-  min-height: 1500px;
-}
-.box{
+.boxTrailer{
   width: 1300px;
   height: 360px;
   display: flex;
   margin: auto;
   background: #0d253f;
   flex-direction: column;
+  justify-content: center;  
+}
+.box{
+  width: 1300px;
+  height: 360px;
+  display: flex;
+  margin: auto;
+
+  flex-direction: column;
   justify-content: center;
+  overflow: hidden;
+
+}
+.boxFront{
+  z-index: 3;
+  position: absolute;
+  width: 1300px;
+}
+.boxBack img{
+  width: 100%;
+  z-index: 1;
+  position: absolute;
+}
+.boxBack{
+  width: 100%;
+  height:100%;
+  position: relative;
+}
+.backColor{
+  background:#0d253f;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  filter:opacity(0.8);
 }
 .textinput{
   width: 1180px;
@@ -132,7 +178,8 @@ body{
   font-weight: bold;
   color: white;
   cursor: pointer;
-  background:  #01b4e4;
+
+  background: linear-gradient(to right, rgba(30	213	169) 0%,rgba(1	180	228) 100%);
   margin-left: 980px;
   width: 130px;
   height: 46px;
@@ -180,6 +227,7 @@ body{
   display: flex;
   width: 1300px;
   margin: auto;
+  flex-direction: column;
 }
 .popularheader{
   margin-left: 40px;
@@ -219,6 +267,7 @@ body{
   width: 80px;
   border-radius: 30px;
   align-items: center;
+
 }
 
 .ontv{
@@ -227,7 +276,7 @@ body{
   padding-top: 7px;
   padding-bottom: 7px;
   padding-left: 15px;
-  padding-right: 15px;
+  padding-right: 20px;
   border-radius: 30px;
   font-size: 15px;
   background: -webkit-linear-gradient(white, green);
@@ -241,6 +290,7 @@ body{
   align-items: center;
   background: #0d253f;
   border-radius: 30px;
+
 }
 .intheaters{
   text-decoration: none;
@@ -270,7 +320,7 @@ body{
   height: 38px;
   width: 38px;
   right: 105px;
-  bottom: 150px;
+  bottom: 75px;
   display: flex;
   position: absolute;
   border-radius: 34px;
@@ -315,5 +365,6 @@ body{
   overflow-y:hidden;
   flex-direction: column;
 }
+
 
 </style>

@@ -1,20 +1,20 @@
 <template>
-<div class="header">
+<div class="header" @click.self="outsideMore">
 <h1>Popular Movies</h1>
 </div>
-<div class="all">
-<div class="content">
-<div class="left">
+<div class="all" >
+<div class="content" @click.self="outsideMore">
+<div class="left" >
 <div class="filteri">
 <div class="filterone filter" :class="{ active: isActiveOne }"  @click="expandone">
-<div class="filterhead" >
+<div class="filterhead" @click.self="outsideMore">
 <h2>Sort</h2>
 <img class="strelica" src="..\strelica.svg" alt="">
 </div>
 </div>
 <div class="filteronecontent">
 <p>Sort Results By</p>
-<select name="" id="" v-model="sort">
+<select name="" id="" v-model="sort" @change="toggleSubmitBlue">
 <option value="popularity.asc" @click.prevent="ascending">Popularity Ascending</option>
 <option value="popularity.desc" @click.prevent="descending">Popularity Descending</option>
 <option value="vote_average.asc" @click.prevent="ratingasc">Rating Ascending</option>
@@ -26,23 +26,23 @@
 </select>
 </div>
 <div class="filtertwo filter" @click="expandtwo" :class="{ active: isActiveTwo }">
-<div class="filterhead">
+<div class="filterhead" @click.self="outsideMore">
 <h2>Filters</h2>
 <img class="strelica" src="..\strelica.svg" alt="">
 </div>
 </div>
 <div class="filtertwocontent">
 <div class="contentfilter">
-<span class="qMark"><p>Show Me</p><span class="tooltipqMark">Login to filter items you've watched.</span><img class="questionMark" src="../questionMark.svg" alt=""></span>
-<label class="container">
+<span class="qMark"><p>Show Me</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">Login to filter items you've watched.<div class="tip"></div></span></span></span>
+<label class="container" @click="toggleSubmitBlue">
   <input type="radio" name="radio">
   <span class="checkmark"></span>
   Everything
-</label><label class="container">
+</label><label class="container" @click="toggleSubmitBlue">
   <input type="radio" name="radio">
   <span class="checkmark"></span>
   Movies I Haven't Seen
-</label><label class="container">
+</label><label class="container" @click="toggleSubmitBlue">
   <input type="radio" name="radio">
   <span class="checkmark"></span>
   Movies I Have Seen
@@ -63,14 +63,14 @@
   <span class="dva"></span>
   Search all releases?
 </label>
-<label for=""><label for="">From</label><input class="from" type="date" v-model="odGodina"></label>
-<label for=""><label for="">To</label><input  class="to" type="date" v-model="doGodina"></label>
+<label for=""><label for="">From</label><input class="from" type="date" @change="toggleSubmitBlue" v-model="odGodina"></label>
+<label for=""><label for="">To</label><input  class="to" type="date" @change="toggleSubmitBlue" v-model="doGodina"></label>
 </div>
 <div class="contentfilter">
 <p>Genres</p>
 <div class="zanrovi">
-<div class="genre" v-for="genre in genres" :key="genre" @click="changeColor">
-<a href="#" class="genres" :class="{selected: this.genre.includes(genre.id)}"  @click.prevent="zanr(genre.id)">{{genre.name}}</a>
+<div class="genre" v-for="(oneZanr) in genress" :key="oneZanr">
+<a href="#" class="genres" :class="{selected: oneZanr.toggle}" @click.prevent="zanr(oneZanr)">{{oneZanr.name}}</a>
 </div>
 </div>
 </div>
@@ -78,17 +78,16 @@
 <p>Certification</p>
 </div>
 <div class="contentfilter">
-<span class="qMark"><p>Language</p><span class="tooltipqMark">Login to filter items you've watched.</span><img class="questionMark" src="../questionMark.svg" alt=""></span>
-<select class="language" name="" id=""></select>
+<span class="qMark"><p>Language</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">No Database for languages <div class="tipTwo"></div></span></span></span>
 </div>
 <div class="contentfilter">
 <p>User Score</p>
       <div class="slider">
         <div class="progress" @click="uScore"></div>
       </div>
-      <div class="range-input">
-        <input type="range" ref="rangeone" class="range-min" min="0" max="10"  v-model="uScoreOne" @click="gap">
-        <input type="range" ref="rangetwo" class="range-max" min="0" max="10"   v-model="uScoreTwo" @click="gapTwo">
+      <div class="range-input" ref="rangeInput">
+        <input type="range" ref="rangeone" class="range-min" min="0" max="10"  v-model="uScoreOne" @input="gap" @change="toggleSubmitBlue">
+        <input type="range" ref="rangetwo" class="range-max" min="0" max="10"   v-model="uScoreTwo" @input="gapTwo" @change="toggleSubmitBlue">
       <div class="uscoreBack">
         <p>0</p><p>5</p><p>10</p>
       </div>
@@ -100,9 +99,9 @@
         <div class="progress" @click="uScore"></div>
       </div>
       <div class="range-input">
-        <input type="range" ref="rangeone" class="range-min" min="0" max="10"  v-model="votemin" >
+        <input type="range" ref="rangeone" class="range-min" min="0" max="500"  v-model="votemin" @change="toggleSubmitBlue">
       <div class="uscoreBack">
-        <p>0</p><p>5</p><p>10</p>
+        <p>0</p><p>250</p><p>500</p>
       </div>
       </div>
 </div>
@@ -112,8 +111,8 @@
         <div class="progress" @click="uScore"></div>
       </div>
       <div class="range-input">
-        <input type="range" ref="rangeone" class="range-min" min="0" max="360"  v-model="minRuntime">
-        <input type="range" ref="rangetwo" class="range-max" min="0" max="360"  v-model="maxRuntime">
+        <input type="range" ref="rangeone" class="range-min" min="0" max="360"  v-model="minRuntime" @input="gapRuntime" @change="toggleSubmitBlue">
+        <input type="range" ref="rangetwo" class="range-max" min="0" max="360"  v-model="maxRuntime" @input="gapTwoRuntime" @change="toggleSubmitBlue">
       <div class="uscoreBack">
         <p>0</p><p>120</p><p class="trisest">240</p><p class="trisest">360</p>
       </div>
@@ -121,7 +120,7 @@
 </div>
 <div class="contentfilter">
 <p for="">Keywords</p>
-<input class="keywords" type="text" name="" id="" v-model="keywords" placeholder="Filter by keywords...">
+<input class="keywords" type="text" v-model="keywords" placeholder="Filter by keywords...">
 </div>
 </div>
 
@@ -130,14 +129,14 @@
 
 
 <div class="filterthree filter" @click="expandthree" :class="{ active: isActiveThree }">
-<div class="filterhead">
+<div class="filterhead" @click.self="outsideMore">
 <h2>What To Watch</h2>
 <img class="strelica" src="..\strelica.svg" alt="">
 </div>
 </div>
 <div class="filterthreecontent">
 <div class="contentfilter">
-<span class="qMark"><p>Show Me</p><span class="tooltipqMark">Login to filter items you've watched.</span><img class="questionMark" src="../questionMark.svg" alt=""></span>
+<span class="qMark"><p>Show Me</p><span class="markHover"><img class="questionMark" src="../questionMark.svg" alt=""><span class="tooltipqMark">Login to filter items you've watched.<div class="tipThree"></div></span></span></span>
 <label class="jedan">
   <input type="checkbox" checked="checked">
   <span class="dva"></span>
@@ -147,42 +146,42 @@
 <div class="contentfilter">
 <p for="">Country</p>
 <select @change="region" name="region" v-model="regionData">
-<option v-for="aRegion in avaliableRegions.results" :key="aRegion">{{aRegion.iso_3166_1}}</option>
+<option v-for="aRegion in avaliableRegions" :key="aRegion">{{aRegion.iso_3166_1}}</option>
 </select>
 <div class="wProviders">
-<div class="providers" v-for="provider in wProviders.results" :key="provider">
-  <img class="providerimg" :src=" slika + provider.logo_path" alt="" @click="selectProvider(provider.provider_name)">
+<div class="providers" v-for="provider in wProviders.results" :key="provider" :class="{selectedProvider: provider.aa}">
+  <img class="providerimg"  :src=" slika + provider.logo_path" alt="" @change="selectProvider(provider.provider_name)" @click="toggleSubmitBlue">
 </div>
 </div>
 </div>
 </div>
-<button class="submit" @click="submit">Submit</button>
+<button class="submit" :class="{submitBlue: submitBlue}" @click="submit" ref="submitButton">Search</button>
 
 </div>
 </div>
-<div class="right">
-<div class="movies" v-if="popular" ref="movies">
-<div class="movie" v-for="(movie) in popular" :key="movie">
-<div class="morebutton" @click="more(movie)" ref="morebutton"></div>
+<div class="right" ref="right">
+<div class="movies" v-if="popular" @click.self="outsideMore">
+<div class="movie"  v-for="(movie) in popular.results" :key="movie">
+<img class="morebutton" ref="morebutton" @click="more(movie)" src="../cirlceDots.svg" alt="">
 <div class="more" :class="{activeMore:movie.active}">
   <p>Want to rate or add this item to a list?</p>
-  <a>Login</a>
+  <a @click="toLogin()">Login<img src="../strelica.svg" alt=""></a>
 <div class="line"></div>
   <p>Not a member?</p>
-  <a>Sign up and join the community</a>
+  <a href="https://www.themoviedb.org/signup">Sign up and join the community<img src="../strelica.svg" alt=""></a>
 
 </div>
-<div class="moreback">
-<div class="movieback" :class="{activeMovieback:movie.active}"  @click="disable(movie)">
-<img class="movieposter" :src="slika + movie.poster_path" alt="">
+<div class="moreback" >
+
+<img class="movieposter" :src="slika + movie.poster_path" alt="" @click="toMovie(movie.id)" >
 <div class="percentage"><circle-progress class="circle" :percent="movie.vote_average*10" :size="200" fill-color="green" empty-color="none" /><p class="percentagebroj">{{movie.vote_average*10}}</p><a>%</a></div>
 <div class="card">
-<a href="#">{{movie.original_title}}</a>
-<p>{{movie.release_date}}</p>
-</div>
-</div>
+<h2><a href="#" @click="toMovie(movie.id)">{{movie.original_name}}</a></h2>
+<p>{{movie.first_air_date}}</p>
 </div>
 
+</div>
+<div class="movieback" :class="{activeMovieback:movie.active}"  @click="disable(movie)"></div>
 </div>
 
 
@@ -194,137 +193,114 @@
 </div>
 <button @click="loadMore" class="loadmore">Load More</button>
 </div>
-
+<div v-if="stickyActive" ref="stickyRef" class="stickySubmit" @click="submit">Search</div>
 </template>
 
 <script>
-import axios from 'axios'
+import { useRouter, useRoute } from 'vue-router'
+import {ref, onMounted, onUnmounted} from 'vue';
 import "vue3-circle-progress/dist/circle-progress.css";
 import CircleProgress from "vue3-circle-progress";
+import axios from 'axios'
 
 export default {
-    components:{CircleProgress},
+  components:{CircleProgress},
+setup(){
+  const route = useRoute()
+  const router = useRouter()
+  const popular = ref([])
+  const morePopular = ref([])
+  let number = 2
+  const slika = ref('https://image.tmdb.org/t/p/original/')
+  const movie = ref('')
 
-mounted(){
-axios.get('https://api.themoviedb.org/3/genre/tv/list?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US')
-.then((response)=>{
-  this.genres = response.data.genres
-  console.log(this.genres)
-})
-axios.get('https://api.themoviedb.org/3/watch/providers/regions?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US')
-.then((response)=>{
-this.avaliableRegions = response.data
-console.log(this.avaliableRegions)
-})
-      axios.get('https://api.themoviedb.org/3/tv/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page=1')
-    .then((response) => {
-    this.popular = response.data.results
-    console.log(this.popular)
-    })
-},
-data(){
-    return{
-        slika: 'https://image.tmdb.org/t/p/original/',
-        popular:[],
-        isActiveOne:false,
-        isActiveTwo:false,
-        isActiveThree:false,
-        genres:'',
-        genre:[],
-        sort:'',
-        odGodina:'',
-        doGodina:'',
-        keywords:'',
-        sProvider:'',
-        wProviders:'',
-        avaliableRegions:'',
-        regionData:'',
-        pagenext:[],
-        page:[],
-        number:2,
-        activee:false,
-        activeMovies:[],
-        uScoreOne:0,
-        uScoreTwo:10,
-        votemin:0,
-        minRuntime:0,
-        maxRuntime:360,
+  let isActiveOne = ref(false)
+  let isActiveTwo = ref(false)
+  let isActiveThree = ref(false)
+  let sort = ref('popularity.desc')
+  let odGodina = ref('')
+  let doGodina = ref('')
+  let keywords = ref([])
+  let sProvider = ref('')
+  let wProviders = ref('')
+  let avaliableRegions = ref([])
+  const regionData = ref('AE')
+  let pagenext = ref([])
+  let page = ref([])
+  let active = ref(false)
+  let activeMovies = ref([])
+  let uScoreOne = ref(0)
+  let uScoreTwo = ref(10)
+  let votemin = ref(0)
+  let minRuntime = ref(0)
+  let maxRuntime = ref(360)
+  let submitData = ref([])
+  const genress = ref([])
+  const genre = ref([])
+  let filterTrue = ref(false)
+  const right = ref(null)
+  const submitBlue = ref(false)
+  const stickyActive = ref(false)
+  const stickyRef = ref(null)
+  const submitButton = ref(null)
+
+  const toggleSubmitBlue = () => {
+          submitBlue.value = true
+          window.addEventListener("scroll", handleSticky)
+  }
+  const loadData = async() => {
+    try{
+      let popularData = await axios.get('https://api.themoviedb.org/3/tv/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page=1')
+      popular.value = await popularData.data
+      console.log(popular.value)
+
     }
-},
-methods:{
-  gap(){
-    let razlika = 1
-    if(this.uScoreTwo < this.uScoreOne ){
-      this.uScoreOne = this.uScoreTwo
+    catch(err){}
+  }
+
+  const loadMore = async() => {
+    try{
+
+      let moreData = await axios.get('https://api.themoviedb.org/3/tv/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page='+number++)
+      morePopular.value = await moreData.data
+      popular.value.results = popular.value.results.concat(morePopular.value.results)
+
     }
-  },
-  gapTwo(){
-    let razlika = 1
-    if(this.uScoreTwo < this.uScoreOne ){
-      this.uScoreTwo = this.uScoreOne 
+    catch(err){}
+    window.addEventListener("scroll",handleScroll)
+  }
+
+  const submit = async() => {
+          try{
+            let submitData = await fetch('https://api.themoviedb.org/3/discover/tv?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&sort_by='+sort.value+'&include_adult=false&include_video=false&page=1&primary_release_date.gte='+odGodina.value+'&primary_release_date.lte='+doGodina.value+'&vote_average.gte='+uScoreOne.value+'&vote_average.lte='+uScoreTwo.value+'&watch_region='+regionData.value+'&with_watch_providers='+sProvider.value+'&with_genres='+genre.value+'&with_keywords='+keywords.value+'&vote_count.gte='+votemin.value+'&with_runtime.gte='+minRuntime.value+'&with_runtime.lte='+maxRuntime.value)
+            popular.value = await submitData.json()
+          }
+          
+          catch(err){}
+            console.log(minRuntime.value)
+            console.log(maxRuntime.value)
+      }
+
+  const selectProvider = (provider) =>{
+        sProvider = provider
+        submitBlue.value = true
+      }
+
+  const region = async() => {
+    try{
+      let chooseRegionData = await axios.get('https://api.themoviedb.org/3/watch/providers/tv?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&watch_region='+regionData.value)
+      wProviders.value = await chooseRegionData.data
+      console.log(wProviders.value)
     }
-  },
-  disable(movie){
-    if(movie.active){
-      movie.active = !movie.active
-    }
-  },
-        more(movie){
-          movie.active = !movie.active
-          },
+    catch(err){}
+  }
 
-  async loadMore(){
-    await axios.get('https://api.themoviedb.org/3/tv/popular?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&page='+this.number++)
-    .then((response)=>{
-      this.page = response.data.results
-      this.popular = this.popular.concat(this.page)
-    })
-  },
-          submit(){
 
-          axios.get('https://api.themoviedb.org/3/discover/tv?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&sort_by='+this.sort+'&include_adult=false&include_video=false&page=1&primary_release_date.gte='+this.odGodina+'&'+'&primary_release_date.lte='+this.doGodina+'&'+'&vote_average.gte='+this.uScoreOne+'&'+'&vote_average.lte='+this.uScoreTwo+'&'+this.genre+'&watch_region='+this.regionData+'&with_watch_providers='+this.sProvider+'&with_genres='+this.genre+'&'+'with_keywords='+this.keywords+'&vote_count.gte='+this.votemin+'&with_runtime.gte='+this.minRuntime+'&with_runtime.lte='+this.maxRunTime)
-          .then((response)=>{
-            this.popular = response.data.results
-          })
-          console.log(this.genre)
-          console.log(this.odGodina)
-          console.log(this.doGodina)
 
-          console.log(this.regionData)
-          console.log(this.sProvider)
-          console.log(this.sort)
-          console.log(this.keywords)
-          console.log(this.uScoreOne)
-          console.log(this.uScoreTwo)
-          console.log(this.votemin)
-          console.log(this.maxRuntime)
-          console.log(this.minRuntime)
-      },
-      selectProvider(provider){
-        this.filterTrue = true
-        this.sProvider = provider
-      },
-      region(){
-        axios.get('https://api.themoviedb.org/3/watch/providers/tv?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US&watch_region='+this.regionData)
-.then((response)=>{
-this.wProviders = response.data
-console.log(this.wProviders)
-})
-        console.log(this.avaliable)
-      },
-
-      zanr(id){
-        const i = this.genre.indexOf(id)
-        if(this.genre.includes(id)){this.genre.splice(i,1)}else{this.genre.push(id)}
-      console.log(this.genre)
-        this.filterTrue = true
-      },
-
-      expandone(){
-var acc = document.getElementsByClassName("filter");
+  const expandone = () => {var acc = document.getElementsByClassName("filter");
 var i;
 for (i = 0; i < acc.length; i++) {
-    this.isActiveOne = !this.isActiveOne
+    isActiveOne.value = !isActiveOne.value
     var panel = acc[0].nextElementSibling;
     if (panel.style.display === "flex") {
       panel.style.display = "none";
@@ -332,11 +308,12 @@ for (i = 0; i < acc.length; i++) {
       panel.style.display = "flex";
     }
   ;
-}},
-      expandtwo(){
+}}
+
+  const expandtwo = () => {
 var acc = document.getElementsByClassName("filter");
 var i;
-    this.isActiveTwo = !this.isActiveTwo
+    isActiveTwo.value = !isActiveTwo.value
 for (i = 0; i < acc.length; i++) {
     var panel = acc[1].nextElementSibling;
     if (panel.style.display === "flex") {
@@ -345,11 +322,12 @@ for (i = 0; i < acc.length; i++) {
       panel.style.display = "flex";
     }
   ;
-}},
-      expandthree(){
+}}
+
+  const expandthree = () => {
 var acc = document.getElementsByClassName("filter");
 var i;
-    this.isActiveThree = !this.isActiveThree
+    isActiveThree.value = !isActiveThree.value
 for (i = 0; i < acc.length; i++) {
     var panel = acc[2].nextElementSibling;
     if (panel.style.display === "flex") {
@@ -358,7 +336,177 @@ for (i = 0; i < acc.length; i++) {
       panel.style.display = "flex";
     }
   ;
-}},
+}}
+
+ const gap = () => {
+   let gapUs = 1
+    if(uScoreTwo.value - uScoreOne.value <= gapUs){
+      uScoreOne.value = uScoreTwo.value - gapUs
+    }
+    console.log(uScoreOne.value)
+ }
+
+ const gapTwo = () => {
+    let gapUs = 1
+    if(uScoreTwo.value - uScoreOne.value <= gapUs){
+      uScoreTwo.value = +uScoreOne.value + +gapUs
+    }
+    console.log(uScoreTwo.value)
+  }
+
+  const gapRuntime = () => {
+    let gap = 30
+    if(maxRuntime.value-minRuntime.value <= gap){
+      minRuntime.value = maxRuntime.value - gap
+    }
+    console.log(minRuntime.value)
+ }
+
+ const gapTwoRuntime = () => {
+   let gap = 30
+    if(maxRuntime.value-minRuntime.value<=gap){
+      maxRuntime.value = +minRuntime.value + +gap
+    }
+    console.log(maxRuntime.value)
+  }
+
+ const disable = (movie) => {
+    if(movie.active){
+      movie.active = false
+    }
+  }
+
+ const more = (movie) => {
+      for(let i = 0;i < popular.value.results.length;i++){
+      if(popular.value.results[i].active = true){
+          popular.value.results[i].active = false}
+    }
+      movie.active = !movie.active
+    }
+
+  const outsideMore = () => {
+      for(let i = 0;i < popular.value.results.length;i++){
+      if(popular.value.results[i].active = true){
+          popular.value.results[i].active = false}
+    }
+  }
+
+  const loadGenres = async() => {
+    try{
+      let genreData = await axios.get('https://api.themoviedb.org/3/genre/tv/list?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US')
+      genress.value = await genreData.data.genres
+
+      
+    }
+    catch(err){}
+  }
+  const zanr = (oneZanr) => {
+        let i = genre.value.indexOf(oneZanr.id)
+        if(genre.value.includes(oneZanr.id)){genre.value.splice(i,1)}else{genre.value.push(oneZanr.id)}
+        oneZanr.toggle = !oneZanr.toggle
+        console.log(oneZanr)
+        console.log(genre)
+        toggleSubmitBlue()
+      }
+
+
+  const loadAvaliableRegions = async() => {
+    try{
+      let avaliableRegionsData = await axios.get('https://api.themoviedb.org/3/watch/providers/regions?api_key=0b5e8ce7494ae54d6c643adf4db40da7&language=en-US')
+      avaliableRegions.value = avaliableRegionsData.data.results
+    }
+    catch(err){}
+  }
+  
+  const handleScroll = (e) => {
+    let element = right.value
+    if(element.getBoundingClientRect().bottom < window.innerHeight){
+      loadMore()
+      
+    }
+  }
+
+  const handleSticky = () => {
+          let submitElement = submitButton.value
+          if(        submitElement.getBoundingClientRect().top >= 0 &&
+        submitElement.getBoundingClientRect().left >= 0 &&
+        submitElement.getBoundingClientRect().bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        submitElement.getBoundingClientRect().right <= (window.innerWidth || document.documentElement.clientWidth)){
+            stickyActive.value = false
+          }
+          else{
+            stickyActive.value = true
+          }
+  }
+  
+  const toMovie = (id) => {
+        router.push({ name: 'Tvdetails', params: { id: id }}) 
+  }
+  const toLogin = () => {
+        router.push({ name: 'Login'}) 
+  }
+
+
+
+
+  loadAvaliableRegions()
+  loadGenres()
+  loadData()
+  return{
+    popular,
+    gap,
+    gapTwo,
+    disable,
+    more,
+    loadMore,
+    submit,
+    avaliableRegions,
+    pagenext,
+    page,
+    active,
+    activeMovies,
+    expandone,
+    expandtwo,
+    expandthree,
+    region,
+    selectProvider,
+    votemin,
+    uScoreOne,
+    uScoreTwo,
+    doGodina,
+    odGodina,
+    minRuntime,
+    maxRuntime,
+    isActiveOne,
+    isActiveTwo,
+    isActiveThree,
+    sort,
+    keywords,
+    regionData,
+    wProviders,
+    slika,
+    movie,
+    submitData,
+    genress,
+    genre,
+    loadGenres,
+    zanr,
+    filterTrue,
+    sProvider,
+    right,
+    handleScroll,
+    gapRuntime,
+    gapTwoRuntime,
+    submitBlue,
+    toggleSubmitBlue,
+    stickyActive,
+    stickyRef,
+    submitButton,
+    handleSticky,
+    outsideMore,
+    toMovie,
+    toLogin
+  }
 }
 }
 </script>
@@ -380,7 +528,7 @@ for (i = 0; i < acc.length; i++) {
 }
 .right{
     width: 1050px;
-    height: 100%;
+    min-height: 1506px;
     margin-top: 10px;
     align-items: flex-start;
 }
@@ -389,6 +537,9 @@ for (i = 0; i < acc.length; i++) {
     height: 270px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    cursor: pointer;
+
+
     
 }
 .movie{
@@ -451,17 +602,24 @@ for (i = 0; i < acc.length; i++) {
     flex-direction: column;
     width: 178px;
     position: relative;
-    cursor:pointer;
-
 }
 .card a{
     text-decoration: none;
     color: black;
-    margin-top: 10px;
+    padding: 0;
+}
+.card a:hover{
+  color: #01b4e4;
+}
+.card h2{
+  font-size: 1em;
+  margin: 0;
+  margin-top: 10px;
+  padding-left: 10px;
 }
 .card p{
     font-weight: 400;
-    color: lightgray;
+    color: gray;
     margin: 10px;
     margin-top: 0;
 }
@@ -472,8 +630,9 @@ for (i = 0; i < acc.length; i++) {
     display: flex;
     position: absolute;
     border-radius: 34px;
-    margin-top: 250px;
-    margin-left: 10px;
+    top: 245px;
+    left: 15px;
+
     }
 .circle{
   padding: 2px;
@@ -489,8 +648,8 @@ for (i = 0; i < acc.length; i++) {
   color: white;
 }
 .percentage a{
-margin-top: 5px;
-  left: 15px;
+margin-top: 6px;
+  left: 13px;
   font-size: 7px;
   color: white;
   position: absolute;
@@ -513,14 +672,17 @@ margin-top: 5px;
 }
 .submit{
     width: 250px;
-    height: 50px;
-    border-radius: 30px;
+    height: 44px;
+    border-radius: 20px;
     border: none;
     font-weight: bold;
     color: white;
     margin-top: 20px;
-    cursor: pointer;
-    background: #01b4e4;
+    pointer-events: none;
+    background: lightgray;
+    font-size: 1.2em;
+    color: gray;
+
 }
 .filteronecontent{
     background: white;
@@ -540,7 +702,7 @@ margin-top: 5px;
     margin-left: 15px;
     margin-top: 15px;
     margin-bottom: 10px;
-    font-weight: 100;
+    font-weight: 400;
 }
 .filteronecontent select{
     width: 220px;
@@ -580,11 +742,11 @@ margin-top: 5px;
     border-bottom-right-radius: 10px;
 }
 .filtertwocontent label{
-    font-weight: 200;
+    font-weight: 400;
     margin-left: 10px;
 }
 .filtertwocontent p{
-    font-weight: 200;
+    font-weight: 400;
     margin-left: 10px;
 }
 .contentfilter{
@@ -751,7 +913,7 @@ margin-top: 5px;
     margin-bottom: 10px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    font-weight: 200;
+    font-weight: 400;
 }
 .contentfilter p{
     font-size: 15px;
@@ -759,7 +921,7 @@ margin-top: 5px;
     margin-left: 15px;
     margin-top: 15px;
     margin-bottom: 10px;
-    font-weight: 100;
+    font-weight: 400;
 }
 .filterthreecontent select{
     width: 220px;
@@ -783,11 +945,11 @@ margin-top: 5px;
     border-bottom-right-radius: 10px;
 }
 .filterthreecontent label{
-    font-weight: 200;
+    font-weight: 400;
     margin-left: 10px;
 }
 .filterthreecontent p{
-    font-weight: 200;
+    font-weight: 400;
     margin-left: 10px;
 }
 .from{
@@ -877,17 +1039,45 @@ margin-top: 5px;
 .tooltipqMark{
   font-weight: 300;
   height: 25px;
-  width: 230px;
   background: #0d253f;
   position: absolute;
-  bottom: 40px;
+  bottom: 45px;
+  right: 45px;
   color: white;
   align-items: center;
   border-radius: 5px;
   display: none;
-  padding-left: 10px;
+  padding: 10px;
 }
-.qMark:hover .tooltipqMark{
+.tip{
+    position: absolute;
+    border: 10px solid transparent;
+    border-top-color:#0d253f;
+    bottom: -20px;
+    left: 75px;
+
+}
+.tipTwo{
+    position: absolute;
+    border: 10px solid transparent;
+    border-top-color:#0d253f;
+    bottom: -20px;
+    left: 67px;
+
+}
+.tipThree{
+    position: absolute;
+    border: 10px solid transparent;
+    border-top-color:#0d253f;
+    bottom: -20px;
+    left: 70px;
+
+}
+.markHover{
+  width: 10px;
+  height: 10px;
+}
+.markHover:hover .tooltipqMark{
   display: flex;
 }
 .from{
@@ -910,10 +1100,10 @@ margin-top: 5px;
 }
 .more{
   width: 280px;
-  height: 180px;
+  height: 200px;
   background: white;
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   left: 15px;
   top: 35px;
   display: none;
@@ -922,13 +1112,24 @@ margin-top: 5px;
   border-radius: 5px;
   overflow: visible;
 
+
+}
+.more img{
+  width: 15px;
+  height: 15px;
+  margin-top: 3px;
+
 }
 .more p,a{
   padding-left: 10px;
 }
 .more a{
+  display: flex;
   width: 262px;
   cursor: pointer;
+  align-items: center;
+  color: gray;
+  text-decoration: none;
 
 }
 .more a:hover{
@@ -945,21 +1146,33 @@ margin-top: 5px;
 
 }
 .morebutton{
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   border-radius: 20px;
   position: absolute;
-  background: white;
-  top: 10px;
+  opacity: 0.5;
+  top: 8px;
   left: 145px;
   cursor: pointer;
-  opacity: 0.4;
+
 }
 .activeMore{
   display: flex;
 }
 .activeMovieback{
-  filter: blur(20px);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+
+    backdrop-filter: blur(20px);
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    z-index: 2;
+    transition: linear .1s;
+
 }
 .slider{
   height: 5px;
@@ -1029,5 +1242,41 @@ outline: 3px solid rgb(134, 217, 255);
   color: lightgray;
   font-weight: 100;
 
+}
+.selectedProvider{
+  border: 2px solid black;
+}
+.submitBlue{
+  background:#01b4e4;
+  pointer-events: all;
+  cursor: pointer;
+  color: white;
+}
+.submitBlue:hover{
+  background: #0d253f;
+}
+.stickySubmit{
+  width: 100%;
+  height: 50px;
+  background: #01b4e4;
+  position: fixed;
+  bottom: 0px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  z-index: 2;
+}
+.stickySubmit:hover{
+  background: #0d253f;
+  cursor: pointer;
+}
+.filteronecontent select:hover{
+    background: lightgray;
+}
+.contentfilter select:hover{
+    background: lightgray;
 }
 </style>

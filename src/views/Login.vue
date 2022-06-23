@@ -19,68 +19,79 @@
 </template>
 
 <script>
+import { useRouter, useRoute } from 'vue-router'
+import {ref} from 'vue'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 export default {
 components:{},
-    computed:{
-        ...mapGetters(['sesija'])
-    },
-    data(){
-        return{
-            username:null,
-            password:null,
-            reqToken:null,
-            approvedToken:null,
-            sessionid: null,
-        }
-    },
-methods:{
-    async submit(){
-         console.log('submit')
+setup(){
+const store = useStore()
+const route = useRoute()
+const router = useRouter()
 
-         const requestToken = await axios.get('https://api.themoviedb.org/3/authentication/token/new?api_key=0b5e8ce7494ae54d6c643adf4db40da7')
-         .then((response) => {
-             this.reqToken = response.data.request_token
-         })
+const username = ref(null)
+const password = ref(null)
+const reqToken = ref(null)
+const approvedToken = ref(null)
+const sessionId = ref(null)
 
-         const approveToken = await axios.post('https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=0b5e8ce7494ae54d6c643adf4db40da7',{
-             username: this.username,
-             password: this.password,
-             request_token: this.reqToken
-         })
-         .then((response) => {
-             this.approvedToken = response.data.request_token
-         })
+    const submit = async() => {
+        let rToken = await axios.get('https://api.themoviedb.org/3/authentication/token/new?api_key=0b5e8ce7494ae54d6c643adf4db40da7')
+        reqToken.value = await rToken.data.request_token
 
-        const sessionId = await axios.post('https://api.themoviedb.org/3/authentication/session/new?api_key=0b5e8ce7494ae54d6c643adf4db40da7',{
-            request_token: this.approvedToken
+        let aToken = await axios.post('https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=0b5e8ce7494ae54d6c643adf4db40da7',{
+             username: username.value,
+             password: password.value,
+             request_token: reqToken.value
+         })
+         approvedToken.value = await aToken.data.request_token
+
+         let sId = await axios.post('https://api.themoviedb.org/3/authentication/session/new?api_key=0b5e8ce7494ae54d6c643adf4db40da7',{
+            request_token: approvedToken.value
         })
-        .then((response) => {
-        this.$store.dispatch('sesija', response.data.session_id)
-        })
-        axios.get('https://api.themoviedb.org/3/account?api_key=0b5e8ce7494ae54d6c643adf4db40da7&session_id=' + this.sesija)
-        .then((response)=>{
-        this.$store.dispatch('username', response.data.username)
-        })
-        this.$router.push({name:'Home'})
-},
-    resetPassword(){
-        window.location.href = "https://www.themoviedb.org/reset-password"
+        sessionId.value = await sId.data.session_id
+        store.dispatch('sesija', sId.data.session_id)
+
+        let last = await axios.get('https://api.themoviedb.org/3/account?api_key=0b5e8ce7494ae54d6c643adf4db40da7&session_id=' + sessionId.value)
+        store.dispatch('username', last.data.username )
+        router.push({name:'home'})
+    }
+
+    
+    return{
+        username,
+        password,
+        reqToken,
+        approvedToken,
+        sessionId,
+        submit
+    }
+    
 }
 }
-}
+
 </script>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&display=swap');
+
+
+.body{
+    font-family: 'Source Sans Pro', Arial, sans-serif;
+    color: black;
+}
 .all{
     display: flex;
     flex-direction: column;
-    height: 350px;
+
     width: 1300px;
     margin: auto;
     margin-top: 20px;
-    margin-bottom: 205px;
+
 }
 .login{
     display: flex;
@@ -93,6 +104,7 @@ methods:{
 .all p{
     margin-bottom: 10px;
     margin-top: 10px;
+    color: black;
 }
 .login label{
     margin-top: 20px;

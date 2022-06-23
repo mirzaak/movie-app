@@ -1,13 +1,14 @@
 <template>
-<div class="all" v-if="media.backdrops">
+<div class="all" v-if="media==!undefined">
     <div class="media" v-for="video in 6" :key="video">
-    <img v-if="media" :src=" slika + media.posters[video].file_path " alt="">
+    <img :src=" slika + media.posters[video].file_path " alt="">
 </div>
 <div class="viewmore"><h1>View More</h1></div>
 </div>
 </template>
 
 <script>
+
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'

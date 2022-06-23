@@ -4,27 +4,27 @@
       <div class="left">
       <router-link to="/"><img class="logo" src="./assets/logo.svg" alt="logo"></router-link> 
       <div class="dropdown">
-      <router-link to="/"><a href="#">Movies</a></router-link>
-        <div class="dropdowncontent">
-          <a href="#">Popular</a>
-          <a href="#">Now Playing</a>
-          <a href="#">Upcoming</a>
-          <a href="#">Top Rated</a>
-        </div> 
-      </div>
-      <div class="dropdown">
-      <router-link to="/"><a href="#">TV Shows</a></router-link>
+      <a>Movies</a>
         <div class="dropdowncontent">
           <a href="#" @click="toPopular">Popular</a>
-          <a href="#">Now Playing</a>
-          <a href="#">Upcoming</a>
-          <a href="#">Top Rated</a>
+          <a href="#" @click="toNowplaying">Now Playing</a>
+          <a href="#" @click="toUpcoming">Upcoming</a>
+          <a href="#" @click="toToprated">Top Rated</a>
         </div> 
       </div>
       <div class="dropdown">
-      <router-link to="/"><a href="#">Popular</a></router-link>
+      <a>TV Shows</a>
         <div class="dropdowncontent">
-          <a href="#">Popular People</a>
+          <a href="#" @click="toPopularTv">Popular</a>
+          <a href="#" @click="toAiringtoday">Airing Today</a>
+          <a href="#" @click="toOntv">On TV</a>
+          <a href="#" @click="toTopRatedtv">Top Rated</a>
+        </div> 
+      </div>
+      <div class="dropdown">
+      <a>Popular</a>
+        <div class="dropdowncontent">
+          <a @click="toPeople" href="#">Popular People</a>
         </div> 
       </div> 
       <router-link to="/"><a href="#">More</a></router-link> 
@@ -32,13 +32,12 @@
       <div class="right">
       <router-link to="/login"><a href="#">Login</a></router-link> 
       <router-link to="/"><a href="#" @click="register">Sign Up</a></router-link> 
-      <router-link to="/"><img class="search" src="./assets/search.svg" alt="search"></router-link> 
+      <router-link to="/search"><img class="search" src="./assets/search.svg" alt="search"></router-link> 
       </div>
     </div>
   </nav>
-  <router-view/>
-  <footer>
-    <div class="footer" v-if="false">
+    <footer>
+    <div class="footer">
       <div class="footercontent">
         <div class="fcontent">
         <div class="footerleft">
@@ -77,6 +76,7 @@
     </div>
     </div>
   </footer>
+  <router-view/>
 </template>
 <script>
 
@@ -86,16 +86,47 @@ methods:{
   register(){
     window.location.href = "https://www.themoviedb.org/signup"
   },
-  toPopular(){
+  toPopularTv(){
     this.$router.push('/tvpopular')
+  },
+  toAiringtoday(){
+    this.$router.push('/tvairingtoday')
+  },
+  toOntv(){
+    this.$router.push('/tvontv')
+  },
+  toTopRatedtv(){
+    this.$router.push('/tvtoprated')
+  },
+  toPopular(){
+    this.$router.push('/moviespopular')
+  },
+  toNowplaying(){
+    this.$router.push('/moviesnowplaying')
+  },
+  toUpcoming(){
+    this.$router.push('/moviesupcoming')
+  },
+  toToprated(){
+    this.$router.push('/moviestoprated')
+  },
+  toPeople(){
+    this.$router.push('/people')
   }
 }
 }
 </script>
 
 <style>
+.html{
+  min-height: 100vh
+}
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
 body{
   margin: 0;
+  min-height: 100vh;
+  font-family: 'Source Sans Pro', Arial, sans-serif;
+  position: relative;
 }
 *{
     font-family: 'Source Sans Pro', Arial, sans-serif;
@@ -121,7 +152,7 @@ nav a{
   align-items: center;
   padding: 40px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 1em;
 }
 .content a{
   padding: 8px;
@@ -153,11 +184,11 @@ nav a{
   padding-top: 10px;
   padding-bottom: 10px;
   border: 1px solid lightgray;
-  z-index: 3;
+  z-index: 5;
 }
 .dropdowncontent a{
   margin: 0;
-  color: gray;
+  color: black;
   font-weight: 400;
   padding-left: 24px;
   padding-right: 64px;
@@ -173,12 +204,16 @@ nav a{
   background: rgba(211, 211, 211, 0.489);
   overflow: hidden;
 }
+.dropdown a{
+  cursor: pointer;
+}
 .footer{
   height: 300px;
   width: 100%;
   background: #0d253f;
-  bottom: 0;
-  position: relative;
+  bottom: -300px;
+  position: absolute;
+
 }
 .footercontent{
   width: 1000px;
